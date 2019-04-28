@@ -27,6 +27,6 @@ _testmain.go
 
 #Custom
 .DS_Store
-bee
+asana
 *.exe~
 .goxc.local.json

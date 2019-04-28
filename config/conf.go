@@ -1,4 +1,4 @@
-// Copyright 2013 bee authors
+// Copyright 2019 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -19,7 +19,7 @@ import (
 	"os"
 	"path/filepath"
 
-	beeLogger "github.com/beego/bee/logger"
+	asanaLogger "github.com/goasana/asana/logger"
 	"gopkg.in/yaml.v2"
 )
 
@@ -80,41 +80,41 @@ type database struct {
 	Dir    string
 }
 
-// LoadConfig loads the bee tool configuration.
-// It looks for Beefile or bee.json in the current path,
+// LoadConfig loads the asana tool configuration.
+// It looks for Asanafile or asana.json in the current path,
 // and falls back to default configuration in case not found.
 func LoadConfig() {
 	currentPath, err := os.Getwd()
 	if err != nil {
-		beeLogger.Log.Error(err.Error())
+		asanaLogger.Log.Error(err.Error())
 	}
 
 	dir, err := os.Open(currentPath)
 	if err != nil {
-		beeLogger.Log.Error(err.Error())
+		asanaLogger.Log.Error(err.Error())
 	}
 	defer dir.Close()
 
 	files, err := dir.Readdir(-1)
 	if err != nil {
-		beeLogger.Log.Error(err.Error())
+		asanaLogger.Log.Error(err.Error())
 	}
 
 	for _, file := range files {
 		switch file.Name() {
-		case "bee.json":
+		case "asana.json":
 			{
 				err = parseJSON(filepath.Join(currentPath, file.Name()), &Conf)
 				if err != nil {
-					beeLogger.Log.Errorf("Failed to parse JSON file: %s", err)
+					asanaLogger.Log.Errorf("Failed to parse JSON file: %s", err)
 				}
 				break
 			}
-		case "Beefile":
+		case "Asanafile":
 			{
 				err = parseYAML(filepath.Join(currentPath, file.Name()), &Conf)
 				if err != nil {
-					beeLogger.Log.Errorf("Failed to parse YAML file: %s", err)
+					asanaLogger.Log.Errorf("Failed to parse YAML file: %s", err)
 				}
 				break
 			}
@@ -123,8 +123,8 @@ func LoadConfig() {
 
 	// Check format version
 	if Conf.Version != confVer {
-		beeLogger.Log.Warn("Your configuration file is outdated. Please do consider updating it.")
-		beeLogger.Log.Hint("Check the latest version of bee's configuration file.")
+		asanaLogger.Log.Warn("Your configuration file is outdated. Please do consider updating it.")
+		asanaLogger.Log.Hint("Check the latest version of asana's configuration file.")
 	}
 
 	// Set variables

@@ -1,4 +1,4 @@
-// Copyright 2016 bee authors
+// Copyright 2016 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -22,10 +22,10 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/beego/bee/cmd/commands"
-	"github.com/beego/bee/cmd/commands/version"
-	beeLogger "github.com/beego/bee/logger"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/cmd/commands"
+	"github.com/goasana/asana/cmd/commands/version"
+	asanaLogger "github.com/goasana/asana/logger"
+	"github.com/goasana/asana/utils"
 )
 
 const dockerBuildTemplate = `FROM {{.BaseImage}}
@@ -60,12 +60,12 @@ type Dockerfile struct {
 var CmdDockerize = &commands.Command{
 	CustomFlags: true,
 	UsageLine:   "dockerize",
-	Short:       "Generates a Dockerfile for your Beego application",
-	Long: `Dockerize generates a Dockerfile for your Beego Web Application.
+	Short:       "Generates a Dockerfile for your Asana application",
+	Long: `Dockerize generates a Dockerfile for your Asana Web Application.
   The Dockerfile will compile, get the dependencies with {{"godep"|bold}}, and set the entrypoint.
 
   {{"Example:"|bold}}
-    $ bee dockerize -expose="3000,80,25"
+    $ asana dockerize -expose="3000,80,25"
   `,
 	PreRun: func(cmd *commands.Command, args []string) { version.ShowShortVersionBanner() },
 	Run:    dockerizeApp,
@@ -86,15 +86,15 @@ func init() {
 
 func dockerizeApp(cmd *commands.Command, args []string) int {
 	if err := cmd.Flag.Parse(args); err != nil {
-		beeLogger.Log.Fatalf("Error parsing flags: %v", err.Error())
+		asanaLogger.Log.Fatalf("Error parsing flags: %v", err.Error())
 	}
 
-	beeLogger.Log.Info("Generating Dockerfile...")
+	asanaLogger.Log.Info("Generating Dockerfile...")
 
 	gopath := os.Getenv("GOPATH")
 	dir, err := filepath.Abs(".")
 	if err != nil {
-		beeLogger.Log.Error(err.Error())
+		asanaLogger.Log.Error(err.Error())
 	}
 
 	appdir := strings.Replace(dir, gopath, "", 1)
@@ -119,15 +119,15 @@ func dockerizeApp(cmd *commands.Command, args []string) int {
 }
 
 func generateDockerfile(df Dockerfile) {
-	t := template.Must(template.New("dockerBuildTemplate").Parse(dockerBuildTemplate)).Funcs(utils.BeeFuncMap())
+	t := template.Must(template.New("dockerBuildTemplate").Parse(dockerBuildTemplate)).Funcs(utils.AsanaFuncMap())
 
 	f, err := os.Create("Dockerfile")
 	if err != nil {
-		beeLogger.Log.Fatalf("Error writing Dockerfile: %v", err.Error())
+		asanaLogger.Log.Fatalf("Error writing Dockerfile: %v", err.Error())
 	}
 	defer utils.CloseFile(f)
 
-	t.Execute(f, df)
+	_ = t.Execute(f, df)
 
-	beeLogger.Log.Success("Dockerfile generated.")
+	asanaLogger.Log.Success("Dockerfile generated.")
 }

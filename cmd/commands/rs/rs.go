@@ -1,4 +1,4 @@
-// Copyright 2017 bee authors
+// Copyright 2017 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -24,21 +24,21 @@ import (
 
 	"strings"
 
-	"github.com/beego/bee/cmd/commands"
-	"github.com/beego/bee/cmd/commands/version"
-	"github.com/beego/bee/config"
-	"github.com/beego/bee/logger"
-	"github.com/beego/bee/logger/colors"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/cmd/commands"
+	"github.com/goasana/asana/cmd/commands/version"
+	"github.com/goasana/asana/config"
+	"github.com/goasana/asana/logger"
+	"github.com/goasana/asana/logger/colors"
+	"github.com/goasana/asana/utils"
 )
 
 var cmdRs = &commands.Command{
 	UsageLine: "rs",
 	Short:     "Run customized scripts",
-	Long: `Run script allows you to run arbitrary commands using Bee.
-  Custom commands are provided from the "scripts" object inside bee.json or Beefile.
+	Long: `Run script allows you to run arbitrary commands using Asana.
+  Custom commands are provided from the "scripts" object inside asana.json or Asanafile.
 
-  To run a custom command, use: {{"$ bee rs mycmd ARGS" | bold}}
+  To run a custom command, use: {{"$ asana rs mycmd ARGS" | bold}}
   {{if len .}}
 {{"AVAILABLE SCRIPTS"|headline}}{{range $cmdName, $cmd := .}}
   {{$cmdName | bold}}
@@ -69,10 +69,10 @@ func runScript(cmd *commands.Command, args []string) int {
 			Args:    args,
 		}
 		if err := command.run(); err != nil {
-			beeLogger.Log.Error(err.Error())
+			asanaLogger.Log.Error(err.Error())
 		}
 	} else {
-		beeLogger.Log.Errorf("Command '%s' not found in Beefile/bee.json", script)
+		asanaLogger.Log.Errorf("Command '%s' not found in Asanafile/asana.json", script)
 	}
 	elapsed := time.Since(start)
 	fmt.Println(colors.GreenBold(fmt.Sprintf("Finished in %s.", elapsed)))
@@ -86,7 +86,7 @@ type customCommand struct {
 }
 
 func (c *customCommand) run() error {
-	beeLogger.Log.Info(colors.GreenBold(fmt.Sprintf("Running '%s'...", c.Name)))
+	asanaLogger.Log.Info(colors.GreenBold(fmt.Sprintf("Running '%s'...", c.Name)))
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "darwin", "linux":

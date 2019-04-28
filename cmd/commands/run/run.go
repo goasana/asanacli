@@ -1,4 +1,4 @@
-// Copyright 2013 bee authors
+// Copyright 2019 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -20,15 +20,15 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/beego/bee/cmd/commands"
-	"github.com/beego/bee/cmd/commands/version"
-	"github.com/beego/bee/config"
-	beeLogger "github.com/beego/bee/logger"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/cmd/commands"
+	"github.com/goasana/asana/cmd/commands/version"
+	"github.com/goasana/asana/config"
+	asanaLogger "github.com/goasana/asana/logger"
+	"github.com/goasana/asana/utils"
 )
 
 var CmdRun = &commands.Command{
-	UsageLine: "run [appname] [watchall] [-main=*.go] [-downdoc=true]  [-gendoc=true] [-vendor=true] [-e=folderToExclude] [-ex=extraPackageToWatch] [-tags=goBuildTags] [-runmode=BEEGO_RUNMODE]",
+	UsageLine: "run [appname] [watchall] [-main=*.go] [-downdoc=true]  [-gendoc=true] [-vendor=true] [-e=folderToExclude] [-ex=extraPackageToWatch] [-tags=goBuildTags] [-runmode=ASANA_RUNMODE]",
 	Short:     "Run the application by starting a local development server",
 	Long: `
 Run command will supervise the filesystem of the application for any changes, and recompile/restart it.
@@ -72,14 +72,14 @@ func init() {
 	CmdRun.Flag.Var(&excludedPaths, "e", "List of paths to exclude.")
 	CmdRun.Flag.BoolVar(&vendorWatch, "vendor", false, "Enable watch vendor folder.")
 	CmdRun.Flag.StringVar(&buildTags, "tags", "", "Set the build tags. See: https://golang.org/pkg/go/build/")
-	CmdRun.Flag.StringVar(&runmode, "runmode", "", "Set the Beego run mode.")
+	CmdRun.Flag.StringVar(&runmode, "runmode", "", "Set the Asana run mode.")
 	CmdRun.Flag.StringVar(&runargs, "runargs", "", "Extra args to run application")
 	CmdRun.Flag.Var(&extraPackages, "ex", "List of extra package to watch.")
 	exit = make(chan bool)
 	commands.AvailableCommands = append(commands.AvailableCommands, CmdRun)
 }
 
-// RunApp locates files to watch, and starts the beego application
+// RunApp locates files to watch, and starts the asana application
 func RunApp(cmd *commands.Command, args []string) int {
 	// The default app path is the current working directory
 	appPath, _ := os.Getwd()
@@ -99,33 +99,33 @@ func RunApp(cmd *commands.Command, args []string) int {
 			appname = path.Base(appPath)
 			currentGoPath = _gopath
 		} else {
-			beeLogger.Log.Fatalf("No application '%s' found in your GOPATH", appPath)
+			asanaLogger.Log.Fatalf("No application '%s' found in your GOPATH", appPath)
 		}
 		if strings.HasSuffix(appname, ".go") && utils.IsExist(appPath) {
-			beeLogger.Log.Warnf("The appname is in conflict with file's current path. Do you want to build appname as '%s'", appname)
-			beeLogger.Log.Info("Do you want to overwrite it? [yes|no] ")
+			asanaLogger.Log.Warnf("The appname is in conflict with file's current path. Do you want to build appname as '%s'", appname)
+			asanaLogger.Log.Info("Do you want to overwrite it? [yes|no] ")
 			if !utils.AskForConfirmation() {
 				return 0
 			}
 		}
 	} else {
-		beeLogger.Log.Warn("Running application outside of GOPATH")
+		asanaLogger.Log.Warn("Running application outside of GOPATH")
 		appname = path.Base(appPath)
 		currentGoPath = appPath
 	}
 
-	beeLogger.Log.Infof("Using '%s' as 'appname'", appname)
+	asanaLogger.Log.Infof("Using '%s' as 'appname'", appname)
 
-	beeLogger.Log.Debugf("Current path: %s", utils.FILE(), utils.LINE(), appPath)
+	asanaLogger.Log.Debugf("Current path: %s", utils.FILE(), utils.LINE(), appPath)
 
 	if runmode == "prod" || runmode == "dev" {
-		os.Setenv("BEEGO_RUNMODE", runmode)
-		beeLogger.Log.Infof("Using '%s' as 'runmode'", os.Getenv("BEEGO_RUNMODE"))
+		_ = os.Setenv("ASANA_RUNMODE", runmode)
+		asanaLogger.Log.Infof("Using '%s' as 'runmode'", os.Getenv("ASANA_RUNMODE"))
 	} else if runmode != "" {
-		os.Setenv("BEEGO_RUNMODE", runmode)
-		beeLogger.Log.Warnf("Using '%s' as 'runmode'", os.Getenv("BEEGO_RUNMODE"))
-	} else if os.Getenv("BEEGO_RUNMODE") != "" {
-		beeLogger.Log.Warnf("Using '%s' as 'runmode'", os.Getenv("BEEGO_RUNMODE"))
+		_ = os.Setenv("ASANA_RUNMODE", runmode)
+		asanaLogger.Log.Warnf("Using '%s' as 'runmode'", os.Getenv("ASANA_RUNMODE"))
+	} else if os.Getenv("ASANA_RUNMODE") != "" {
+		asanaLogger.Log.Warnf("Using '%s' as 'runmode'", os.Getenv("ASANA_RUNMODE"))
 	}
 
 	var paths []string
@@ -143,7 +143,7 @@ func RunApp(cmd *commands.Command, args []string) int {
 			if found, _, _fullPath := utils.SearchGOPATHs(packagePath); found {
 				readAppDirectories(_fullPath, &paths)
 			} else {
-				beeLogger.Log.Warnf("No extra package '%s' found in your GOPATH", packagePath)
+				asanaLogger.Log.Warnf("No extra package '%s' found in your GOPATH", packagePath)
 			}
 		}
 		// let paths unique
@@ -169,7 +169,7 @@ func RunApp(cmd *commands.Command, args []string) int {
 		if _, err := os.Stat(path.Join(appPath, "swagger", "index.html")); err != nil {
 			if os.IsNotExist(err) {
 				downloadFromURL(swaggerlink, "swagger.zip")
-				unzipAndDelete("swagger.zip")
+				_ = unzipAndDelete("swagger.zip")
 			}
 		}
 	}
@@ -236,16 +236,16 @@ func isExcluded(filePath string) bool {
 	for _, p := range excludedPaths {
 		absP, err := path.Abs(p)
 		if err != nil {
-			beeLogger.Log.Errorf("Cannot get absolute path of '%s'", p)
+			asanaLogger.Log.Errorf("Cannot get absolute path of '%s'", p)
 			continue
 		}
 		absFilePath, err := path.Abs(filePath)
 		if err != nil {
-			beeLogger.Log.Errorf("Cannot get absolute path of '%s'", filePath)
+			asanaLogger.Log.Errorf("Cannot get absolute path of '%s'", filePath)
 			break
 		}
 		if strings.HasPrefix(absFilePath, absP) {
-			beeLogger.Log.Infof("'%s' is not being watched", filePath)
+			asanaLogger.Log.Infof("'%s' is not being watched", filePath)
 			return true
 		}
 	}

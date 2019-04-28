@@ -1,4 +1,4 @@
-// Copyright 2013 bee authors
+// Copyright 2019 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -18,15 +18,15 @@ import (
 	"log"
 	"os"
 
-	"github.com/beego/bee/cmd"
-	"github.com/beego/bee/cmd/commands"
-	"github.com/beego/bee/config"
-	"github.com/beego/bee/generate/swaggergen"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/cmd"
+	"github.com/goasana/asana/cmd/commands"
+	"github.com/goasana/asana/config"
+	"github.com/goasana/asana/generate/swaggergen"
+	"github.com/goasana/asana/utils"
 )
 
 var (
-	workspace = os.Getenv("BeeWorkspace")
+	workspace = os.Getenv("AsanaWorkspace")
 )
 
 func main() {

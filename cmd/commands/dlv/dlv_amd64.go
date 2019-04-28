@@ -1,4 +1,4 @@
-// Copyright 2017 bee authors
+// Copyright 2017 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -24,15 +24,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/beego/bee/cmd/commands"
-	"github.com/beego/bee/cmd/commands/version"
-	beeLogger "github.com/beego/bee/logger"
-	"github.com/beego/bee/utils"
-	"github.com/derekparker/delve/service"
-	"github.com/derekparker/delve/service/rpc2"
-	"github.com/derekparker/delve/service/rpccommon"
-	"github.com/derekparker/delve/terminal"
 	"github.com/fsnotify/fsnotify"
+	"github.com/go-delve/delve/pkg/terminal"
+	"github.com/go-delve/delve/service"
+	"github.com/go-delve/delve/service/rpc2"
+	"github.com/go-delve/delve/service/rpccommon"
+	"github.com/goasana/asana/cmd/commands"
+	"github.com/goasana/asana/cmd/commands/version"
+	asanaLogger "github.com/goasana/asana/logger"
+	"github.com/goasana/asana/utils"
 )
 
 var cmdDlv = &commands.Command{
@@ -41,9 +41,9 @@ var cmdDlv = &commands.Command{
 	Short:       "Start a debugging session using Delve",
 	Long: `dlv command start a debugging session using debugging tool Delve.
 
-  To debug your application using Delve, use: {{"$ bee dlv" | bold}}
+  To debug your application using Delve, use: {{"$ asana dlv" | bold}}
 
-  For more information on Delve: https://github.com/derekparker/delve
+  For more information on Delve: https://github.com/go-delve/delve
 `,
 	PreRun: func(cmd *commands.Command, args []string) { version.ShowShortVersionBanner() },
 	Run:    runDlv,
@@ -66,7 +66,7 @@ func init() {
 
 func runDlv(cmd *commands.Command, args []string) int {
 	if err := cmd.Flag.Parse(args); err != nil {
-		beeLogger.Log.Fatalf("Error while parsing flags: %v", err.Error())
+		asanaLogger.Log.Fatalf("Error while parsing flags: %v", err.Error())
 	}
 
 	var (
@@ -76,7 +76,7 @@ func runDlv(cmd *commands.Command, args []string) int {
 	)
 
 	if err := loadPathsToWatch(&paths); err != nil {
-		beeLogger.Log.Fatalf("Error while loading paths to watch: %v", err.Error())
+		asanaLogger.Log.Fatalf("Error while loading paths to watch: %v", err.Error())
 	}
 	go startWatcher(paths, notifyChan)
 	return startDelveDebugger(addr, notifyChan)
@@ -104,7 +104,7 @@ func loadPathsToWatch(paths *[]string) error {
 	if err != nil {
 		return err
 	}
-	filepath.Walk(directory, func(path string, info os.FileInfo, _ error) error {
+	_ = filepath.Walk(directory, func(path string, info os.FileInfo, _ error) error {
 		if strings.HasSuffix(info.Name(), "docs") {
 			return filepath.SkipDir
 		}
@@ -125,23 +125,23 @@ func loadPathsToWatch(paths *[]string) error {
 
 // startDelveDebugger starts the Delve debugger server
 func startDelveDebugger(addr string, ch chan int) int {
-	beeLogger.Log.Info("Starting Delve Debugger...")
+	asanaLogger.Log.Info("Starting Delve Debugger...")
 
 	fp, err := buildDebug()
 	if err != nil {
-		beeLogger.Log.Fatalf("Error while building debug binary: %v", err)
+		asanaLogger.Log.Fatalf("Error while building debug binary: %v", err)
 	}
 	defer os.Remove(fp)
 
 	abs, err := filepath.Abs("./debug")
 	if err != nil {
-		beeLogger.Log.Fatalf("%v", err)
+		asanaLogger.Log.Fatalf("%v", err)
 	}
 
 	// Create and start the debugger server
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not start listener: %s", err)
+		asanaLogger.Log.Fatalf("Could not start listener: %s", err)
 	}
 	defer listener.Close()
 
@@ -152,9 +152,9 @@ func startDelveDebugger(addr string, ch chan int) int {
 		APIVersion:  2,
 		WorkingDir:  ".",
 		ProcessArgs: []string{abs},
-	}, false)
+	})
 	if err := server.Run(); err != nil {
-		beeLogger.Log.Fatalf("Could not start debugger server: %v", err)
+		asanaLogger.Log.Fatalf("Could not start debugger server: %v", err)
 	}
 
 	// Start the Delve client REPL
@@ -164,10 +164,10 @@ func startDelveDebugger(addr string, ch chan int) int {
 		for {
 			if val := <-ch; val == 0 {
 				if _, err := client.Restart(); err != nil {
-					utils.Notify("Error while restarting the client: "+err.Error(), "bee")
+					utils.Notify("Error while restarting the client: "+err.Error(), "asana")
 				} else {
 					if verbose {
-						utils.Notify("Delve Debugger Restarted", "bee")
+						utils.Notify("Delve Debugger Restarted", "asana")
 					}
 				}
 			}
@@ -178,12 +178,12 @@ func startDelveDebugger(addr string, ch chan int) int {
 	term := terminal.New(client, nil)
 	status, err := term.Run()
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not start Delve REPL: %v", err)
+		asanaLogger.Log.Fatalf("Could not start Delve REPL: %v", err)
 	}
 
 	// Stop and kill the debugger server once user quits the REPL
-	if err := server.Stop(true); err != nil {
-		beeLogger.Log.Fatalf("Could not stop Delve server: %v", err)
+	if err := server.Stop(); err != nil {
+		asanaLogger.Log.Fatalf("Could not stop Delve server: %v", err)
 	}
 	return status
 }
@@ -194,14 +194,14 @@ var eventsModTime = make(map[string]int64)
 func startWatcher(paths []string, ch chan int) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not start the watcher: %v", err)
+		asanaLogger.Log.Fatalf("Could not start the watcher: %v", err)
 	}
 	defer watcher.Close()
 
 	// Feed the paths to the watcher
 	for _, path := range paths {
 		if err := watcher.Add(path); err != nil {
-			beeLogger.Log.Fatalf("Could not set a watch on path: %v", err)
+			asanaLogger.Log.Fatalf("Could not set a watch on path: %v", err)
 		}
 	}
 
@@ -222,7 +222,7 @@ func startWatcher(paths []string, ch chan int) {
 			if build {
 				go func() {
 					if verbose {
-						utils.Notify("Rebuilding application with the new changes", "bee")
+						utils.Notify("Rebuilding application with the new changes", "asana")
 					}
 
 					// Wait 1s before re-build until there is no file change
@@ -230,7 +230,7 @@ func startWatcher(paths []string, ch chan int) {
 					time.Sleep(time.Until(scheduleTime))
 					_, err := buildDebug()
 					if err != nil {
-						utils.Notify("Build Failed: "+err.Error(), "bee")
+						utils.Notify("Build Failed: "+err.Error(), "asana")
 					} else {
 						ch <- 0 // Notify listeners
 					}
