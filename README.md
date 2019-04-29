@@ -117,7 +117,7 @@ $ asana new my-web-app
     create   /home/asanauser/.go/src/github.com/user/my-web-app/static/css/
     create   /home/asanauser/.go/src/github.com/user/my-web-app/static/img/
     create   /home/asanauser/.go/src/github.com/user/my-web-app/views/
-    create   /home/asanauser/.go/src/github.com/user/my-web-app/conf/app.conf
+    create   /home/asanauser/.go/src/github.com/user/my-web-app/conf/app.yaml
     create   /home/asanauser/.go/src/github.com/user/my-web-app/controllers/default.go
     create   /home/asanauser/.go/src/github.com/user/my-web-app/views/index.tpl
     create   /home/asanauser/.go/src/github.com/user/my-web-app/routers/router.go
@@ -215,7 +215,7 @@ $ asana api my-api
     create   /home/asanauser/.go/src/github.com/user/my-api/conf
     create   /home/asanauser/.go/src/github.com/user/my-api/controllers
     create   /home/asanauser/.go/src/github.com/user/my-api/tests
-    create   /home/asanauser/.go/src/github.com/user/my-api/conf/app.conf
+    create   /home/asanauser/.go/src/github.com/user/my-api/conf/app.yaml
     create   /home/asanauser/.go/src/github.com/user/my-api/models
     create   /home/asanauser/.go/src/github.com/user/my-api/routers/
     create   /home/asanauser/.go/src/github.com/user/my-api/controllers/object.go
@@ -253,7 +253,7 @@ $ asana hprose my-rpc-app
     create   /home/asanauser/.go/src/github.com/user/my-rpc-app/static/css/
     create   /home/asanauser/.go/src/github.com/user/my-rpc-app/static/img/
     create   /home/asanauser/.go/src/github.com/user/my-rpc-app/views/
-    create   /home/asanauser/.go/src/github.com/user/my-rpc-app/conf/app.conf
+    create   /home/asanauser/.go/src/github.com/user/my-rpc-app/conf/app.yamlº
     create   /home/asanauser/.go/src/github.com/user/my-rpc-app/controllers/default.go
     create   /home/asanauser/.go/src/github.com/user/my-rpc-app/views/index.tpl
     create   /home/asanauser/.go/src/github.com/user/my-rpc-app/routers/router.go

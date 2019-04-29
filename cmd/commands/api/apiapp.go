@@ -44,7 +44,7 @@ var CmdApiapp = &commands.Command{
 
 	    ├── main.go
 	    ├── {{"conf"|foldername}}
-	    │     └── app.conf
+	    │     └── app.yaml
 	    ├── {{"controllers"|foldername}}
 	    │     └── object.go
 	    │     └── user.go
@@ -576,10 +576,10 @@ func createAPI(cmd *commands.Command, args []string) int {
 	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "tests"), "\x1b[0m")
 
 	if generate.SQLConn != "" {
-		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.conf"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.yaml"), "\x1b[0m")
 		confContent := strings.Replace(apiconf, "{{.Appname}}", appName, -1)
 		confContent = strings.Replace(confContent, "{{.SQLConnStr}}", generate.SQLConn.String(), -1)
-		utils.WriteToFile(path.Join(appPath, "conf", "app.conf"), confContent)
+		utils.WriteToFile(path.Join(appPath, "conf", "app.yaml"), confContent)
 
 		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "main.go"), "\x1b[0m")
 		mainGoContent := strings.Replace(apiMainconngo, "{{.Appname}}", packPath, -1)
@@ -602,10 +602,10 @@ func createAPI(cmd *commands.Command, args []string) int {
 		asanaLogger.Log.Infof("Using '%s' as 'tables'", generate.Tables)
 		generate.GenerateAppcode(string(generate.SQLDriver), string(generate.SQLConn), "3", string(generate.Tables), appPath)
 	} else {
-		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.conf"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.yaml"), "\x1b[0m")
 		confContent := strings.Replace(apiconf, "{{.Appname}}", appName, -1)
 		confContent = strings.Replace(confContent, "{{.SQLConnStr}}", "", -1)
-		utils.WriteToFile(path.Join(appPath, "conf", "app.conf"), confContent)
+		utils.WriteToFile(path.Join(appPath, "conf", "app.yaml"), confContent)
 
 		_ = os.Mkdir(path.Join(appPath, "models"), 0755)
 		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models"), "\x1b[0m")

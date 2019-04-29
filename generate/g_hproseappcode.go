@@ -6,6 +6,7 @@
 |                   http://www.hprose.org/                 |
 |                                                          |
 \**********************************************************/
+
 /**********************************************************\
  *                                                        *
  * Build rpc application use Hprose base on asana         *
@@ -31,12 +32,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var Hproseconf = `appname = {{.Appname}}
-httpport = 8080
-runmode = dev
-autorender = false
-copyrequestbody = true
-EnableDocs = true
+var Hproseconf = `appname: {{.Appname}}
+httpport: 8080
+runmode: dev
+autorender: false
+copyrequestbody: true
+enabledocs: true
 `
 var HproseMaingo = `package main
 
@@ -45,9 +46,9 @@ import (
 	"reflect"
 
 	"{{.Appname}}/models"
-	"github.com/hprose/hprose-golang/rpc"
 
 	"github.com/goasana/framework"
+	"github.com/hprose/hprose-golang/rpc"
 )
 
 func logInvokeHandler(

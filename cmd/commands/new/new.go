@@ -37,7 +37,7 @@ Creates a Asana application for the given app name in the current directory.
 
             ├── main.go
             ├── {{"conf"|foldername}}
-            │     └── app.conf
+            │     └── app.yaml
             ├── {{"controllers"|foldername}}
             │     └── default.go
             ├── {{"models"|foldername}}
@@ -66,6 +66,7 @@ var maingo = `package main
 
 import (
 	_ "{{.Appname}}/routers"
+
 	"github.com/goasana/framework"
 )
 
@@ -78,6 +79,7 @@ var router = `package routers
 
 import (
 	"{{.Appname}}/controllers"
+
 	"github.com/goasana/framework"
 )
 
@@ -292,8 +294,8 @@ func CreateApp(cmd *commands.Command, args []string) int {
 	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "static", "img")+string(path.Separator), "\x1b[0m")
 	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "views")+string(path.Separator), "\x1b[0m")
 	_ = os.Mkdir(path.Join(appPath, "views"), 0755)
-	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.conf"), "\x1b[0m")
-	utils.WriteToFile(path.Join(appPath, "conf", "app.conf"), strings.Replace(appconf, "{{.Appname}}", path.Base(args[0]), -1))
+	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.yaml"), "\x1b[0m")
+	utils.WriteToFile(path.Join(appPath, "conf", "app.yaml"), strings.Replace(appconf, "{{.Appname}}", path.Base(args[0]), -1))
 
 	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "controllers", "default.go"), "\x1b[0m")
 	utils.WriteToFile(path.Join(appPath, "controllers", "default.go"), controllers)

@@ -33,7 +33,7 @@ var CmdHproseapp = &commands.Command{
 
 	    ├── main.go
 	    ├── {{"conf"|foldername}}
-	    │     └── app.conf
+	    │     └── app.yaml
 	    └── {{"models"|foldername}}
 	          └── object.go
 	          └── user.go
@@ -73,9 +73,8 @@ func createhprose(cmd *commands.Command, args []string) int {
 	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", apppath, "\x1b[0m")
 	_ = os.Mkdir(path.Join(apppath, "conf"), 0755)
 	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "conf"), "\x1b[0m")
-	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "conf", "app.conf"), "\x1b[0m")
-	utils.WriteToFile(path.Join(apppath, "conf", "app.conf"),
-		strings.Replace(generate.Hproseconf, "{{.Appname}}", args[0], -1))
+	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "conf", "app.yaml"), "\x1b[0m")
+	utils.WriteToFile(path.Join(apppath, "conf", "app.yaml"), strings.Replace(generate.Hproseconf, "{{.Appname}}", args[0], -1))
 
 	if generate.SQLConn != "" {
 		asanaLogger.Log.Infof("Using '%s' as 'driver'", generate.SQLDriver)

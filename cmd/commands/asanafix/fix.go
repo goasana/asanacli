@@ -213,7 +213,7 @@ func fixFile(file string) error {
 		fixed = strings.Replace(fixed, "v.Apis", "v.APIs", -1)
 	}
 	// Replace the config file
-	if strings.HasSuffix(file, ".conf") {
+	if strings.HasSuffix(file, ".yaml") {
 		fixed = strings.Replace(fixed, "HttpCertFile", "HTTPSCertFile", -1)
 		fixed = strings.Replace(fixed, "HttpKeyFile", "HTTPSKeyFile", -1)
 		fixed = strings.Replace(fixed, "EnableHttpListen", "HTTPEnable", -1)
