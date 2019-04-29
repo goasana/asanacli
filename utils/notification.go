@@ -1,4 +1,4 @@
-// Copyright 2017 bee authors
+// Copyright 2017 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -21,10 +21,10 @@ import (
 
 	"runtime"
 
-	"github.com/beego/bee/config"
+	"github.com/goasana/asana/config"
 )
 
-const appName = "Beego"
+const appName = "Asana"
 
 func Notify(text, title string) {
 	if !config.Conf.EnableNotification {

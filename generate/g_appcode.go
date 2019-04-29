@@ -1,4 +1,4 @@
-// Copyright 2013 bee authors
+// Copyright 2019 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -23,9 +23,9 @@ import (
 	"regexp"
 	"strings"
 
-	beeLogger "github.com/beego/bee/logger"
-	"github.com/beego/bee/logger/colors"
-	"github.com/beego/bee/utils"
+	asanaLogger "github.com/goasana/asana/logger"
+	"github.com/goasana/asana/logger/colors"
+	"github.com/goasana/asana/utils"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )
@@ -163,7 +163,7 @@ type ForeignKey struct {
 	RefColumn string
 }
 
-// OrmTag contains Beego ORM tag information for a column
+// OrmTag contains Asana ORM tag information for a column
 type OrmTag struct {
 	Auto        bool
 	Pk          bool
@@ -273,7 +273,7 @@ func GenerateAppcode(driver, connStr, level, tables, currpath string) {
 	case "3":
 		mode = OModel | OController | ORouter
 	default:
-		beeLogger.Log.Fatal("Invalid level value. Must be either \"1\", \"2\", or \"3\"")
+		asanaLogger.Log.Fatal("Invalid level value. Must be either \"1\", \"2\", or \"3\"")
 	}
 	var selectedTables map[string]bool
 	if tables != "" {
@@ -286,9 +286,9 @@ func GenerateAppcode(driver, connStr, level, tables, currpath string) {
 	case "mysql":
 	case "postgres":
 	case "sqlite":
-		beeLogger.Log.Fatal("Generating app code from SQLite database is not supported yet.")
+		asanaLogger.Log.Fatal("Generating app code from SQLite database is not supported yet.")
 	default:
-		beeLogger.Log.Fatal("Unknown database driver. Must be either \"mysql\", \"postgres\" or \"sqlite\"")
+		asanaLogger.Log.Fatal("Unknown database driver. Must be either \"mysql\", \"postgres\" or \"sqlite\"")
 	}
 	gen(driver, connStr, mode, selectedTables, currpath)
 }
@@ -298,11 +298,11 @@ func GenerateAppcode(driver, connStr, level, tables, currpath string) {
 func gen(dbms, connStr string, mode byte, selectedTableNames map[string]bool, apppath string) {
 	db, err := sql.Open(dbms, connStr)
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not connect to '%s' database using '%s': %s", dbms, connStr, err)
+		asanaLogger.Log.Fatalf("Could not connect to '%s' database using '%s': %s", dbms, connStr, err)
 	}
 	defer db.Close()
 	if trans, ok := dbDriver[dbms]; ok {
-		beeLogger.Log.Info("Analyzing database tables...")
+		asanaLogger.Log.Info("Analyzing database tables...")
 		var tableNames []string
 		if len(selectedTableNames) != 0 {
 			for tableName := range selectedTableNames {
@@ -320,7 +320,7 @@ func gen(dbms, connStr string, mode byte, selectedTableNames map[string]bool, ap
 		pkgPath := getPackagePath(apppath)
 		writeSourceFiles(pkgPath, tables, mode, mvcPath)
 	} else {
-		beeLogger.Log.Fatalf("Generating app code from '%s' database is not supported yet.", dbms)
+		asanaLogger.Log.Fatalf("Generating app code from '%s' database is not supported yet.", dbms)
 	}
 }
 
@@ -328,13 +328,13 @@ func gen(dbms, connStr string, mode byte, selectedTableNames map[string]bool, ap
 func (*MysqlDB) GetTableNames(db *sql.DB) (tables []string) {
 	rows, err := db.Query("SHOW TABLES")
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not show tables: %s", err)
+		asanaLogger.Log.Fatalf("Could not show tables: %s", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var name string
 		if err := rows.Scan(&name); err != nil {
-			beeLogger.Log.Fatalf("Could not show tables: %s", err)
+			asanaLogger.Log.Fatalf("Could not show tables: %s", err)
 		}
 		tables = append(tables, name)
 	}
@@ -377,12 +377,12 @@ func (*MysqlDB) GetConstraints(db *sql.DB, table *Table, blackList map[string]bo
 			c.table_schema = database() AND c.table_name = ? AND u.table_schema = database() AND u.table_name = ?`,
 		table.Name, table.Name) //  u.position_in_unique_constraint,
 	if err != nil {
-		beeLogger.Log.Fatal("Could not query INFORMATION_SCHEMA for PK/UK/FK information")
+		asanaLogger.Log.Fatal("Could not query INFORMATION_SCHEMA for PK/UK/FK information")
 	}
 	for rows.Next() {
 		var constraintTypeBytes, columnNameBytes, refTableSchemaBytes, refTableNameBytes, refColumnNameBytes, refOrdinalPosBytes []byte
 		if err := rows.Scan(&constraintTypeBytes, &columnNameBytes, &refTableSchemaBytes, &refTableNameBytes, &refColumnNameBytes, &refOrdinalPosBytes); err != nil {
-			beeLogger.Log.Fatal("Could not read INFORMATION_SCHEMA for PK/UK/FK information")
+			asanaLogger.Log.Fatal("Could not read INFORMATION_SCHEMA for PK/UK/FK information")
 		}
 		constraintType, columnName, refTableSchema, refTableName, refColumnName, refOrdinalPos :=
 			string(constraintTypeBytes), string(columnNameBytes), string(refTableSchemaBytes),
@@ -422,7 +422,7 @@ func (mysqlDB *MysqlDB) GetColumns(db *sql.DB, table *Table, blackList map[strin
 			table_schema = database() AND table_name = ?`,
 		table.Name)
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not query the database: %s", err)
+		asanaLogger.Log.Fatalf("Could not query the database: %s", err)
 	}
 	defer colDefRows.Close()
 
@@ -430,7 +430,7 @@ func (mysqlDB *MysqlDB) GetColumns(db *sql.DB, table *Table, blackList map[strin
 		// datatype as bytes so that SQL <null> values can be retrieved
 		var colNameBytes, dataTypeBytes, columnTypeBytes, isNullableBytes, columnDefaultBytes, extraBytes, columnCommentBytes []byte
 		if err := colDefRows.Scan(&colNameBytes, &dataTypeBytes, &columnTypeBytes, &isNullableBytes, &columnDefaultBytes, &extraBytes, &columnCommentBytes); err != nil {
-			beeLogger.Log.Fatal("Could not query INFORMATION_SCHEMA for column information")
+			asanaLogger.Log.Fatal("Could not query INFORMATION_SCHEMA for column information")
 		}
 		colName, dataType, columnType, isNullable, columnDefault, extra, columnComment :=
 			string(colNameBytes), string(dataTypeBytes), string(columnTypeBytes), string(isNullableBytes), string(columnDefaultBytes), string(extraBytes), string(columnCommentBytes)
@@ -440,7 +440,7 @@ func (mysqlDB *MysqlDB) GetColumns(db *sql.DB, table *Table, blackList map[strin
 		col.Name = utils.CamelCase(colName)
 		col.Type, err = mysqlDB.GetGoDataType(dataType)
 		if err != nil {
-			beeLogger.Log.Fatalf("%s", err)
+			asanaLogger.Log.Fatalf("%s", err)
 		}
 
 		// Tag info
@@ -480,7 +480,7 @@ func (mysqlDB *MysqlDB) GetColumns(db *sql.DB, table *Table, blackList map[strin
 					if sign == "unsigned" && extra != "auto_increment" {
 						col.Type, err = mysqlDB.GetGoDataType(dataType + " " + sign)
 						if err != nil {
-							beeLogger.Log.Fatalf("%s", err)
+							asanaLogger.Log.Fatalf("%s", err)
 						}
 					}
 				}
@@ -530,14 +530,14 @@ func (*PostgresDB) GetTableNames(db *sql.DB) (tables []string) {
 		table_type = 'BASE TABLE' AND
 		table_schema NOT IN ('pg_catalog', 'information_schema')`)
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not show tables: %s", err)
+		asanaLogger.Log.Fatalf("Could not show tables: %s", err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var name string
 		if err := rows.Scan(&name); err != nil {
-			beeLogger.Log.Fatalf("Could not show tables: %s", err)
+			asanaLogger.Log.Fatalf("Could not show tables: %s", err)
 		}
 		tables = append(tables, name)
 	}
@@ -567,13 +567,13 @@ func (*PostgresDB) GetConstraints(db *sql.DB, table *Table, blackList map[string
 			 AND u.table_name = $2`,
 		table.Name, table.Name) //  u.position_in_unique_constraint,
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not query INFORMATION_SCHEMA for PK/UK/FK information: %s", err)
+		asanaLogger.Log.Fatalf("Could not query INFORMATION_SCHEMA for PK/UK/FK information: %s", err)
 	}
 
 	for rows.Next() {
 		var constraintTypeBytes, columnNameBytes, refTableSchemaBytes, refTableNameBytes, refColumnNameBytes, refOrdinalPosBytes []byte
 		if err := rows.Scan(&constraintTypeBytes, &columnNameBytes, &refTableSchemaBytes, &refTableNameBytes, &refColumnNameBytes, &refOrdinalPosBytes); err != nil {
-			beeLogger.Log.Fatalf("Could not read INFORMATION_SCHEMA for PK/UK/FK information: %s", err)
+			asanaLogger.Log.Fatalf("Could not read INFORMATION_SCHEMA for PK/UK/FK information: %s", err)
 		}
 		constraintType, columnName, refTableSchema, refTableName, refColumnName, refOrdinalPos :=
 			string(constraintTypeBytes), string(columnNameBytes), string(refTableSchemaBytes),
@@ -623,7 +623,7 @@ func (postgresDB *PostgresDB) GetColumns(db *sql.DB, table *Table, blackList map
 			 AND table_name = $1`,
 		table.Name)
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not query INFORMATION_SCHEMA for column information: %s", err)
+		asanaLogger.Log.Fatalf("Could not query INFORMATION_SCHEMA for column information: %s", err)
 	}
 	defer colDefRows.Close()
 
@@ -631,7 +631,7 @@ func (postgresDB *PostgresDB) GetColumns(db *sql.DB, table *Table, blackList map
 		// datatype as bytes so that SQL <null> values can be retrieved
 		var colNameBytes, dataTypeBytes, columnTypeBytes, isNullableBytes, columnDefaultBytes, extraBytes []byte
 		if err := colDefRows.Scan(&colNameBytes, &dataTypeBytes, &columnTypeBytes, &isNullableBytes, &columnDefaultBytes, &extraBytes); err != nil {
-			beeLogger.Log.Fatalf("Could not query INFORMATION_SCHEMA for column information: %s", err)
+			asanaLogger.Log.Fatalf("Could not query INFORMATION_SCHEMA for column information: %s", err)
 		}
 		colName, dataType, columnType, isNullable, columnDefault, extra :=
 			string(colNameBytes), string(dataTypeBytes), string(columnTypeBytes), string(isNullableBytes), string(columnDefaultBytes), string(extraBytes)
@@ -640,7 +640,7 @@ func (postgresDB *PostgresDB) GetColumns(db *sql.DB, table *Table, blackList map
 		col.Name = utils.CamelCase(colName)
 		col.Type, err = postgresDB.GetGoDataType(dataType)
 		if err != nil {
-			beeLogger.Log.Fatalf("%s", err)
+			asanaLogger.Log.Fatalf("%s", err)
 		}
 
 		// Tag info
@@ -730,15 +730,15 @@ func createPaths(mode byte, paths *MvcPath) {
 // Newly geneated files will be inside these folders.
 func writeSourceFiles(pkgPath string, tables []*Table, mode byte, paths *MvcPath) {
 	if (OModel & mode) == OModel {
-		beeLogger.Log.Info("Creating model files...")
+		asanaLogger.Log.Info("Creating model files...")
 		writeModelFiles(tables, paths.ModelPath)
 	}
 	if (OController & mode) == OController {
-		beeLogger.Log.Info("Creating controller files...")
+		asanaLogger.Log.Info("Creating controller files...")
 		writeControllerFiles(tables, paths.ControllerPath, pkgPath)
 	}
 	if (ORouter & mode) == ORouter {
-		beeLogger.Log.Info("Creating router files...")
+		asanaLogger.Log.Info("Creating router files...")
 		writeRouterFile(tables, paths.RouterPath, pkgPath)
 	}
 }
@@ -753,21 +753,21 @@ func writeModelFiles(tables []*Table, mPath string) {
 		var f *os.File
 		var err error
 		if utils.IsExist(fpath) {
-			beeLogger.Log.Warnf("'%s' already exists. Do you want to overwrite it? [Yes|No] ", fpath)
+			asanaLogger.Log.Warnf("'%s' already exists. Do you want to overwrite it? [Yes|No] ", fpath)
 			if utils.AskForConfirmation() {
 				f, err = os.OpenFile(fpath, os.O_RDWR|os.O_TRUNC, 0666)
 				if err != nil {
-					beeLogger.Log.Warnf("%s", err)
+					asanaLogger.Log.Warnf("%s", err)
 					continue
 				}
 			} else {
-				beeLogger.Log.Warnf("Skipped create file '%s'", fpath)
+				asanaLogger.Log.Warnf("Skipped create file '%s'", fpath)
 				continue
 			}
 		} else {
 			f, err = os.OpenFile(fpath, os.O_CREATE|os.O_RDWR, 0666)
 			if err != nil {
-				beeLogger.Log.Warnf("%s", err)
+				asanaLogger.Log.Warnf("%s", err)
 				continue
 			}
 		}
@@ -791,7 +791,7 @@ func writeModelFiles(tables []*Table, mPath string) {
 		fileStr = strings.Replace(fileStr, "{{timePkg}}", timePkg, -1)
 		fileStr = strings.Replace(fileStr, "{{importTimePkg}}", importTimePkg, -1)
 		if _, err := f.WriteString(fileStr); err != nil {
-			beeLogger.Log.Fatalf("Could not write model file to '%s': %s", fpath, err)
+			asanaLogger.Log.Fatalf("Could not write model file to '%s': %s", fpath, err)
 		}
 		utils.CloseFile(f)
 		fmt.Fprintf(w, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", fpath, "\x1b[0m")
@@ -812,28 +812,28 @@ func writeControllerFiles(tables []*Table, cPath string, pkgPath string) {
 		var f *os.File
 		var err error
 		if utils.IsExist(fpath) {
-			beeLogger.Log.Warnf("'%s' already exists. Do you want to overwrite it? [Yes|No] ", fpath)
+			asanaLogger.Log.Warnf("'%s' already exists. Do you want to overwrite it? [Yes|No] ", fpath)
 			if utils.AskForConfirmation() {
 				f, err = os.OpenFile(fpath, os.O_RDWR|os.O_TRUNC, 0666)
 				if err != nil {
-					beeLogger.Log.Warnf("%s", err)
+					asanaLogger.Log.Warnf("%s", err)
 					continue
 				}
 			} else {
-				beeLogger.Log.Warnf("Skipped create file '%s'", fpath)
+				asanaLogger.Log.Warnf("Skipped create file '%s'", fpath)
 				continue
 			}
 		} else {
 			f, err = os.OpenFile(fpath, os.O_CREATE|os.O_RDWR, 0666)
 			if err != nil {
-				beeLogger.Log.Warnf("%s", err)
+				asanaLogger.Log.Warnf("%s", err)
 				continue
 			}
 		}
 		fileStr := strings.Replace(CtrlTPL, "{{ctrlName}}", utils.CamelCase(tb.Name), -1)
 		fileStr = strings.Replace(fileStr, "{{pkgPath}}", pkgPath, -1)
 		if _, err := f.WriteString(fileStr); err != nil {
-			beeLogger.Log.Fatalf("Could not write controller file to '%s': %s", fpath, err)
+			asanaLogger.Log.Fatalf("Could not write controller file to '%s': %s", fpath, err)
 		}
 		utils.CloseFile(f)
 		fmt.Fprintf(w, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", fpath, "\x1b[0m")
@@ -862,26 +862,26 @@ func writeRouterFile(tables []*Table, rPath string, pkgPath string) {
 	var f *os.File
 	var err error
 	if utils.IsExist(fpath) {
-		beeLogger.Log.Warnf("'%s' already exists. Do you want to overwrite it? [Yes|No] ", fpath)
+		asanaLogger.Log.Warnf("'%s' already exists. Do you want to overwrite it? [Yes|No] ", fpath)
 		if utils.AskForConfirmation() {
 			f, err = os.OpenFile(fpath, os.O_RDWR|os.O_TRUNC, 0666)
 			if err != nil {
-				beeLogger.Log.Warnf("%s", err)
+				asanaLogger.Log.Warnf("%s", err)
 				return
 			}
 		} else {
-			beeLogger.Log.Warnf("Skipped create file '%s'", fpath)
+			asanaLogger.Log.Warnf("Skipped create file '%s'", fpath)
 			return
 		}
 	} else {
 		f, err = os.OpenFile(fpath, os.O_CREATE|os.O_RDWR, 0666)
 		if err != nil {
-			beeLogger.Log.Warnf("%s", err)
+			asanaLogger.Log.Warnf("%s", err)
 			return
 		}
 	}
 	if _, err := f.WriteString(routerStr); err != nil {
-		beeLogger.Log.Fatalf("Could not write router file to '%s': %s", fpath, err)
+		asanaLogger.Log.Fatalf("Could not write router file to '%s': %s", fpath, err)
 	}
 	utils.CloseFile(f)
 	fmt.Fprintf(w, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", fpath, "\x1b[0m")
@@ -948,10 +948,10 @@ func getFileName(tbName string) (filename string) {
 func getPackagePath(curpath string) (packpath string) {
 	gopath := os.Getenv("GOPATH")
 	if gopath == "" {
-		beeLogger.Log.Fatal("GOPATH environment variable is not set or empty")
+		asanaLogger.Log.Fatal("GOPATH environment variable is not set or empty")
 	}
 
-	beeLogger.Log.Debugf("GOPATH: %s", utils.FILE(), utils.LINE(), gopath)
+	asanaLogger.Log.Debugf("GOPATH: %s", utils.FILE(), utils.LINE(), gopath)
 
 	appsrcpath := ""
 	haspath := false
@@ -967,11 +967,11 @@ func getPackagePath(curpath string) (packpath string) {
 	}
 
 	if !haspath {
-		beeLogger.Log.Fatalf("Cannot generate application code outside of GOPATH '%s' compare with CWD '%s'", gopath, curpath)
+		asanaLogger.Log.Fatalf("Cannot generate application code outside of GOPATH '%s' compare with CWD '%s'", gopath, curpath)
 	}
 
 	if curpath == appsrcpath {
-		beeLogger.Log.Fatal("Cannot generate application code outside of application path")
+		asanaLogger.Log.Fatal("Cannot generate application code outside of application path")
 	}
 
 	packpath = strings.Join(strings.Split(curpath[len(appsrcpath)+1:], string(filepath.Separator)), "/")
@@ -992,7 +992,7 @@ import (
 	"reflect"
 	"strings"
 	{{timePkg}}
-	"github.com/astaxie/beego/orm"
+	"github.com/goasana/framework/orm"
 )
 
 {{modelStruct}}
@@ -1141,12 +1141,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/goasana/framework"
 )
 
 // {{ctrlName}}Controller operations for {{ctrlName}}
 type {{ctrlName}}Controller struct {
-	beego.Controller
+	asana.Controller
 }
 
 // URLMapping ...
@@ -1305,10 +1305,10 @@ func (c *{{ctrlName}}Controller) Delete() {
 }
 `
 	RouterTPL = `// @APIVersion 1.0.0
-// @Title beego Test API
-// @Description beego has a very cool tools to autogenerate documents for your API
+// @Title asana Test API
+// @Description asana has a very cool tools to autogenerate documents for your API
 // @Contact astaxie@gmail.com
-// @TermsOfServiceUrl http://beego.me/
+// @TermsOfServiceUrl http://asana.me/
 // @License Apache 2.0
 // @LicenseUrl http://www.apache.org/licenses/LICENSE-2.0.html
 package routers
@@ -1316,19 +1316,19 @@ package routers
 import (
 	"{{pkgPath}}/controllers"
 
-	"github.com/astaxie/beego"
+	"github.com/goasana/framework"
 )
 
 func init() {
-	ns := beego.NewNamespace("/v1",
+	ns := asana.NewNamespace("/v1",
 		{{nameSpaces}}
 	)
-	beego.AddNamespace(ns)
+	asana.AddNamespace(ns)
 }
 `
 	NamespaceTPL = `
-		beego.NSNamespace("/{{nameSpace}}",
-			beego.NSInclude(
+		asana.NSNamespace("/{{nameSpace}}",
+			asana.NSInclude(
 				&controllers.{{ctrlName}}Controller{},
 			),
 		),

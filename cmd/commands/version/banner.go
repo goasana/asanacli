@@ -6,23 +6,22 @@ import (
 	"os"
 	"runtime"
 	"text/template"
-
 	"time"
 
-	beeLogger "github.com/beego/bee/logger"
+	asanaLogger "github.com/goasana/asana/logger"
 )
 
 // RuntimeInfo holds information about the current runtime.
 type RuntimeInfo struct {
-	GoVersion    string
-	GOOS         string
-	GOARCH       string
-	NumCPU       int
-	GOPATH       string
-	GOROOT       string
-	Compiler     string
-	BeeVersion   string
-	BeegoVersion string
+	GoVersion             string
+	GOOS                  string
+	GOARCH                string
+	NumCPU                int
+	GOPATH                string
+	GOROOT                string
+	Compiler              string
+	AsanaVersion          string
+	AsanaFrameworkVersion string
 }
 
 // InitBanner loads the banner and prints it to output
@@ -30,12 +29,12 @@ type RuntimeInfo struct {
 // print the banner in case of error.
 func InitBanner(out io.Writer, in io.Reader) {
 	if in == nil {
-		beeLogger.Log.Fatal("The input is nil")
+		asanaLogger.Log.Fatal("The input is nil")
 	}
 
 	banner, err := ioutil.ReadAll(in)
 	if err != nil {
-		beeLogger.Log.Fatalf("Error while trying to read the banner: %s", err)
+		asanaLogger.Log.Fatalf("Error while trying to read the banner: %s", err)
 	}
 
 	show(out, string(banner))
@@ -47,7 +46,7 @@ func show(out io.Writer, content string) {
 		Parse(content)
 
 	if err != nil {
-		beeLogger.Log.Fatalf("Cannot parse the banner template: %s", err)
+		asanaLogger.Log.Fatalf("Cannot parse the banner template: %s", err)
 	}
 
 	err = t.Execute(out, RuntimeInfo{
@@ -59,10 +58,10 @@ func show(out io.Writer, content string) {
 		runtime.GOROOT(),
 		runtime.Compiler,
 		version,
-		GetBeegoVersion(),
+		GetAsanaVersion(),
 	})
 	if err != nil {
-		beeLogger.Log.Error(err.Error())
+		asanaLogger.Log.Error(err.Error())
 	}
 }
 

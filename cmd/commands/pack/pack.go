@@ -18,21 +18,21 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/beego/bee/cmd/commands"
-	"github.com/beego/bee/cmd/commands/version"
-	beeLogger "github.com/beego/bee/logger"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/cmd/commands"
+	"github.com/goasana/asana/cmd/commands/version"
+	asanaLogger "github.com/goasana/asana/logger"
+	"github.com/goasana/asana/utils"
 )
 
 var CmdPack = &commands.Command{
 	CustomFlags: true,
 	UsageLine:   "pack",
-	Short:       "Compresses a Beego application into a single file",
-	Long: `Pack is used to compress Beego applications into a tarball/zip file.
+	Short:       "Compresses a Asana application into a single file",
+	Long: `Pack is used to compress Asana applications into a tarball/zip file.
   This eases the deployment by directly extracting the file to a server.
 
   {{"Example:"|bold}}
-    $ bee pack -v -ba="-ldflags '-s -w'"
+    $ asana pack -v -ba="-ldflags '-s -w'"
 `,
 	PreRun: func(cmd *commands.Command, args []string) { version.ShowShortVersionBanner() },
 	Run:    packApp,
@@ -169,7 +169,7 @@ func (wft *walkFileTree) readDir(dirname string) ([]os.FileInfo, error) {
 		return nil, err
 	}
 	list, err := f.Readdir(-1)
-	f.Close()
+	_ = f.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (wft *walkFileTree) walkLeaf(fpath string, fi os.FileInfo, err error) error
 
 	if added, err := wft.wak.compress(name, fpath, fi); added {
 		if verbose {
-			fmt.Fprintf(*wft.output, "\t%s%scompressed%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", name, "\x1b[0m")
+			_, _ = fmt.Fprintf(*wft.output, "\t%s%scompressed%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", name, "\x1b[0m")
 		}
 		wft.allfiles[name] = true
 		return err
@@ -356,10 +356,10 @@ func (wft *zipWalk) compress(name, fpath string, fi os.FileInfo) (bool, error) {
 func packDirectory(output io.Writer, excludePrefix []string, excludeSuffix []string,
 	excludeRegexp []*regexp.Regexp, includePath ...string) (err error) {
 
-	beeLogger.Log.Infof("Excluding relpath prefix: %s", strings.Join(excludePrefix, ":"))
-	beeLogger.Log.Infof("Excluding relpath suffix: %s", strings.Join(excludeSuffix, ":"))
+	asanaLogger.Log.Infof("Excluding relpath prefix: %s", strings.Join(excludePrefix, ":"))
+	asanaLogger.Log.Infof("Excluding relpath suffix: %s", strings.Join(excludeSuffix, ":"))
 	if len(excludeRegexp) > 0 {
-		beeLogger.Log.Infof("Excluding filename regex: `%s`", strings.Join(excludeR, "`, `"))
+		asanaLogger.Log.Infof("Excluding filename regex: `%s`", strings.Join(excludeR, "`, `"))
 	}
 
 	w, err := os.OpenFile(outputP, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
@@ -437,13 +437,13 @@ func packApp(cmd *commands.Command, args []string) int {
 
 	thePath, err := path.Abs(appPath)
 	if err != nil {
-		beeLogger.Log.Fatalf("Wrong application path: %s", thePath)
+		asanaLogger.Log.Fatalf("Wrong application path: %s", thePath)
 	}
 	if stat, err := os.Stat(thePath); os.IsNotExist(err) || !stat.IsDir() {
-		beeLogger.Log.Fatalf("Application path does not exist: %s", thePath)
+		asanaLogger.Log.Fatalf("Application path does not exist: %s", thePath)
 	}
 
-	beeLogger.Log.Infof("Packaging application on '%s'...", thePath)
+	asanaLogger.Log.Infof("Packaging application on '%s'...", thePath)
 
 	appName := path.Base(thePath)
 
@@ -458,19 +458,19 @@ func packApp(cmd *commands.Command, args []string) int {
 
 	str := strconv.FormatInt(time.Now().UnixNano(), 10)[9:]
 
-	tmpdir := path.Join(os.TempDir(), "beePack-"+str)
+	tmpdir := path.Join(os.TempDir(), "asanaPack-"+str)
 
-	os.Mkdir(tmpdir, 0700)
+	_ = os.Mkdir(tmpdir, 0700)
 	defer func() {
-		// Remove the tmpdir once bee pack is done
+		// Remove the tmpdir once asana pack is done
 		err := os.RemoveAll(tmpdir)
 		if err != nil {
-			beeLogger.Log.Error("Failed to remove the generated temp dir")
+			asanaLogger.Log.Error("Failed to remove the generated temp dir")
 		}
 	}()
 
 	if build {
-		beeLogger.Log.Info("Building application...")
+		asanaLogger.Log.Info("Building application...")
 		var envs []string
 		for _, env := range buildEnvs {
 			parts := strings.SplitN(env, "=", 2)
@@ -492,7 +492,7 @@ func packApp(cmd *commands.Command, args []string) int {
 		os.Setenv("GOOS", goos)
 		os.Setenv("GOARCH", goarch)
 
-		beeLogger.Log.Infof("Using: GOOS=%s GOARCH=%s", goos, goarch)
+		asanaLogger.Log.Infof("Using: GOOS=%s GOARCH=%s", goos, goarch)
 
 		binPath := path.Join(tmpdir, appName)
 		if goos == "windows" {
@@ -515,10 +515,10 @@ func packApp(cmd *commands.Command, args []string) int {
 		execmd.Dir = thePath
 		err = execmd.Run()
 		if err != nil {
-			beeLogger.Log.Fatal(err.Error())
+			asanaLogger.Log.Fatal(err.Error())
 		}
 
-		beeLogger.Log.Success("Build Successful!")
+		asanaLogger.Log.Success("Build Successful!")
 	}
 
 	switch format {
@@ -536,7 +536,7 @@ func packApp(cmd *commands.Command, args []string) int {
 	if _, err := os.Stat(outputP); err != nil {
 		err = os.MkdirAll(outputP, 0755)
 		if err != nil {
-			beeLogger.Log.Fatal(err.Error())
+			asanaLogger.Log.Fatal(err.Error())
 		}
 	}
 
@@ -558,20 +558,20 @@ func packApp(cmd *commands.Command, args []string) int {
 	for _, r := range excludeR {
 		if len(r) > 0 {
 			if re, err := regexp.Compile(r); err != nil {
-				beeLogger.Log.Fatal(err.Error())
+				asanaLogger.Log.Fatal(err.Error())
 			} else {
 				exr = append(exr, re)
 			}
 		}
 	}
 
-	beeLogger.Log.Infof("Writing to output: %s", outputP)
+	asanaLogger.Log.Infof("Writing to output: %s", outputP)
 
 	err = packDirectory(output, exp, exs, exr, tmpdir, thePath)
 	if err != nil {
-		beeLogger.Log.Fatal(err.Error())
+		asanaLogger.Log.Fatal(err.Error())
 	}
 
-	beeLogger.Log.Success("Application packed!")
+	asanaLogger.Log.Success("Application packed!")
 	return 0
 }

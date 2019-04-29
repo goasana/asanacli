@@ -1,4 +1,4 @@
-// Copyright 2013 bee authors
+// Copyright 2019 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -24,10 +24,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/beego/bee/config"
-	beeLogger "github.com/beego/bee/logger"
-	"github.com/beego/bee/logger/colors"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/config"
+	asanaLogger "github.com/goasana/asana/logger"
+	"github.com/goasana/asana/logger/colors"
+	"github.com/goasana/asana/utils"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -51,7 +51,7 @@ var (
 func NewWatcher(paths []string, files []string, isgenerate bool) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		beeLogger.Log.Fatalf("Failed to create watcher: %s", err)
+		asanaLogger.Log.Fatalf("Failed to create watcher: %s", err)
 	}
 
 	go func() {
@@ -74,18 +74,18 @@ func NewWatcher(paths []string, files []string, isgenerate bool) {
 
 				mt := utils.GetFileModTime(e.Name)
 				if t := eventTime[e.Name]; mt == t {
-					beeLogger.Log.Hintf(colors.Bold("Skipping: ")+"%s", e.String())
+					asanaLogger.Log.Hintf(colors.Bold("Skipping: ")+"%s", e.String())
 					isBuild = false
 				}
 
 				eventTime[e.Name] = mt
 
 				if isBuild {
-					beeLogger.Log.Hintf("Event fired: %s", e)
+					asanaLogger.Log.Hintf("Event fired: %s", e)
 					go func() {
 						// Wait 1s before autobuild until there is no file change.
 						scheduleTime = time.Now().Add(1 * time.Second)
-						time.Sleep(scheduleTime.Sub(time.Now()))
+						time.Sleep(time.Until(scheduleTime))
 						AutoBuild(files, isgenerate)
 
 						if config.Conf.EnableReload {
@@ -96,17 +96,17 @@ func NewWatcher(paths []string, files []string, isgenerate bool) {
 					}()
 				}
 			case err := <-watcher.Errors:
-				beeLogger.Log.Warnf("Watcher error: %s", err.Error()) // No need to exit here
+				asanaLogger.Log.Warnf("Watcher error: %s", err.Error()) // No need to exit here
 			}
 		}
 	}()
 
-	beeLogger.Log.Info("Initializing watcher...")
+	asanaLogger.Log.Info("Initializing watcher...")
 	for _, path := range paths {
-		beeLogger.Log.Hintf(colors.Bold("Watching: ")+"%s", path)
+		asanaLogger.Log.Hintf(colors.Bold("Watching: ")+"%s", path)
 		err = watcher.Add(path)
 		if err != nil {
-			beeLogger.Log.Fatalf("Failed to watch directory: %s", err)
+			asanaLogger.Log.Fatalf("Failed to watch directory: %s", err)
 		}
 	}
 }
@@ -135,20 +135,20 @@ func AutoBuild(files []string, isgenerate bool) {
 	}
 
 	if isgenerate {
-		beeLogger.Log.Info("Generating the docs...")
-		icmd := exec.Command("bee", "generate", "docs")
+		asanaLogger.Log.Info("Generating the docs...")
+		icmd := exec.Command("asana", "generate", "docs")
 		icmd.Env = append(os.Environ(), "GOGC=off")
 		err = icmd.Run()
 		if err != nil {
 			utils.Notify("", "Failed to generate the docs.")
-			beeLogger.Log.Errorf("Failed to generate the docs.")
+			asanaLogger.Log.Errorf("Failed to generate the docs.")
 			return
 		}
-		beeLogger.Log.Success("Docs generated!")
+		asanaLogger.Log.Success("Docs generated!")
 	}
 	appName := appname
 	if err == nil {
-		
+
 		if runtime.GOOS == "windows" {
 			appName += ".exe"
 		}
@@ -166,12 +166,12 @@ func AutoBuild(files []string, isgenerate bool) {
 		err = bcmd.Run()
 		if err != nil {
 			utils.Notify(stderr.String(), "Build Failed")
-			beeLogger.Log.Errorf("Failed to build the application: %s", stderr.String())
+			asanaLogger.Log.Errorf("Failed to build the application: %s", stderr.String())
 			return
 		}
 	}
 
-	beeLogger.Log.Success("Built Successfully!")
+	asanaLogger.Log.Success("Built Successfully!")
 	Restart(appName)
 }
 
@@ -179,27 +179,47 @@ func AutoBuild(files []string, isgenerate bool) {
 func Kill() {
 	defer func() {
 		if e := recover(); e != nil {
-			beeLogger.Log.Infof("Kill recover: %s", e)
+			asanaLogger.Log.Infof("Kill recover: %s", e)
 		}
 	}()
 	if cmd != nil && cmd.Process != nil {
-		err := cmd.Process.Kill()
-		if err != nil {
-			beeLogger.Log.Errorf("Error while killing cmd process: %s", err)
+		// Windows does not support Interrupt
+		if runtime.GOOS == "windows" {
+			cmd.Process.Signal(os.Kill)
+		} else {
+			cmd.Process.Signal(os.Interrupt)
+		}
+
+		ch := make(chan struct{}, 1)
+		go func() {
+			cmd.Wait()
+			ch <- struct{}{}
+		}()
+
+		select {
+		case <-ch:
+			return
+		case <-time.After(10 * time.Second):
+			asanaLogger.Log.Info("Timeout. Force kill cmd process")
+			err := cmd.Process.Kill()
+			if err != nil {
+				asanaLogger.Log.Errorf("Error while killing cmd process: %s", err)
+			}
+			return
 		}
 	}
 }
 
 // Restart kills the running command process and starts it again
 func Restart(appname string) {
-	beeLogger.Log.Debugf("Kill running process", utils.FILE(), utils.LINE())
+	asanaLogger.Log.Debugf("Kill running process", utils.FILE(), utils.LINE())
 	Kill()
 	go Start(appname)
 }
 
 // Start starts the command process
 func Start(appname string) {
-	beeLogger.Log.Infof("Restarting '%s'...", appname)
+	asanaLogger.Log.Infof("Restarting '%s'...", appname)
 	if !strings.Contains(appname, "./") {
 		appname = "./" + appname
 	}
@@ -217,7 +237,7 @@ func Start(appname string) {
 	cmd.Env = append(os.Environ(), config.Conf.Envs...)
 
 	go cmd.Run()
-	beeLogger.Log.Successf("'%s' is running...", appname)
+	asanaLogger.Log.Successf("'%s' is running...", appname)
 	started <- true
 }
 
@@ -236,7 +256,7 @@ func shouldIgnoreFile(filename string) bool {
 	for _, regex := range ignoredFilesRegExps {
 		r, err := regexp.Compile(regex)
 		if err != nil {
-			beeLogger.Log.Fatalf("Could not compile regular expression: %s", err)
+			asanaLogger.Log.Fatalf("Could not compile regular expression: %s", err)
 		}
 		if r.MatchString(filename) {
 			return true

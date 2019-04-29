@@ -1,4 +1,4 @@
-// Copyright 2013 bee authors
+// Copyright 2019 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -20,22 +20,22 @@ import (
 	path "path/filepath"
 	"strings"
 
-	"github.com/beego/bee/cmd/commands"
-	"github.com/beego/bee/cmd/commands/version"
-	"github.com/beego/bee/generate"
-	beeLogger "github.com/beego/bee/logger"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/cmd/commands"
+	"github.com/goasana/asana/cmd/commands/version"
+	"github.com/goasana/asana/generate"
+	asanaLogger "github.com/goasana/asana/logger"
+	"github.com/goasana/asana/utils"
 )
 
 var CmdApiapp = &commands.Command{
 	// CustomFlags: true,
 	UsageLine: "api [appname]",
-	Short:     "Creates a Beego API application",
+	Short:     "Creates a Asana API application",
 	Long: `
-  The command 'api' creates a Beego API application.
+  The command 'api' creates a Asana API application.
 
   {{"Example:"|bold}}
-      $ bee api [appname] [-tables=""] [-driver=mysql] [-conn=root:@tcp(127.0.0.1:3306)/test]
+      $ asana api [appname] [-tables=""] [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"]
 
   If 'conn' argument is empty, the command will generate an example API application. Otherwise the command
   will connect to your database and generate models based on the existing tables.
@@ -65,21 +65,22 @@ runmode = dev
 autorender = false
 copyrequestbody = true
 EnableDocs = true
+sqlconn = {{.SQLConnStr}}
 `
 var apiMaingo = `package main
 
 import (
 	_ "{{.Appname}}/routers"
 
-	"github.com/astaxie/beego"
+	"github.com/astaxie/asana"
 )
 
 func main() {
-	if beego.BConfig.RunMode == "dev" {
-		beego.BConfig.WebConfig.DirectoryIndex = true
-		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
+	if asana.BConfig.RunMode == "dev" {
+		asana.BConfig.WebConfig.DirectoryIndex = true
+		asana.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
-	beego.Run()
+	asana.Run()
 }
 `
 
@@ -88,30 +89,27 @@ var apiMainconngo = `package main
 import (
 	_ "{{.Appname}}/routers"
 
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/asana"
+	"github.com/astaxie/asana/orm"
 	{{.DriverPkg}}
 )
 
-func init() {
-	orm.RegisterDataBase("default", "{{.DriverName}}", "{{.conn}}")
-}
-
 func main() {
-	if beego.BConfig.RunMode == "dev" {
-		beego.BConfig.WebConfig.DirectoryIndex = true
-		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
+	orm.RegisterDataBase("default", "{{.DriverName}}", asana.AppConfig.String("sqlconn"))
+	if asana.BConfig.RunMode == "dev" {
+		asana.BConfig.WebConfig.DirectoryIndex = true
+		asana.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
-	beego.Run()
+	asana.Run()
 }
 
 `
 
 var apirouter = `// @APIVersion 1.0.0
-// @Title beego Test API
-// @Description beego has a very cool tools to autogenerate documents for your API
+// @Title asana Test API
+// @Description asana has a very cool tools to autogenerate documents for your API
 // @Contact astaxie@gmail.com
-// @TermsOfServiceUrl http://beego.me/
+// @TermsOfServiceUrl http://asana.me/
 // @License Apache 2.0
 // @LicenseUrl http://www.apache.org/licenses/LICENSE-2.0.html
 package routers
@@ -119,23 +117,23 @@ package routers
 import (
 	"{{.Appname}}/controllers"
 
-	"github.com/astaxie/beego"
+	"github.com/astaxie/asana"
 )
 
 func init() {
-	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/object",
-			beego.NSInclude(
+	ns := asana.NewNamespace("/v1",
+		asana.NSNamespace("/object",
+			asana.NSInclude(
 				&controllers.ObjectController{},
 			),
 		),
-		beego.NSNamespace("/user",
-			beego.NSInclude(
+		asana.NSNamespace("/user",
+			asana.NSInclude(
 				&controllers.UserController{},
 			),
 		),
 	)
-	beego.AddNamespace(ns)
+	asana.AddNamespace(ns)
 }
 `
 
@@ -288,12 +286,12 @@ import (
 	"{{.Appname}}/models"
 	"encoding/json"
 
-	"github.com/astaxie/beego"
+	"github.com/astaxie/asana"
 )
 
 // Operations about object
 type ObjectController struct {
-	beego.Controller
+	asana.Controller
 }
 
 // @Title Create
@@ -381,12 +379,12 @@ import (
 	"{{.Appname}}/models"
 	"encoding/json"
 
-	"github.com/astaxie/beego"
+	"github.com/astaxie/asana"
 )
 
 // Operations about Users
 type UserController struct {
-	beego.Controller
+	asana.Controller
 }
 
 // @Title CreateUser
@@ -506,23 +504,23 @@ import (
 	"path/filepath"
 	_ "{{.Appname}}/routers"
 
-	"github.com/astaxie/beego"
+	"github.com/goasana/framework"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func init() {
-	_, file, _, _ := runtime.Caller(1)
+	_, file, _, _ := runtime.Caller(0)
 	apppath, _ := filepath.Abs(filepath.Dir(filepath.Join(file, ".." + string(filepath.Separator))))
-	beego.TestBeegoInit(apppath)
+	asana.TestAsanaInit(apppath)
 }
 
 // TestGet is a sample to run an endpoint test
 func TestGet(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/v1/object", nil)
 	w := httptest.NewRecorder()
-	beego.BeeApp.Handlers.ServeHTTP(w, r)
+	asana.AsanaApp.Handlers.ServeHTTP(w, r)
 
-	beego.Trace("testing", "TestGet", "Code[%d]\n%s", w.Code, w.Body.String())
+	asana.Trace("testing", "TestGet", "Code[%d]\n%s", w.Code, w.Body.String())
 
 	Convey("Subject: Test Station Endpoint\n", t, func() {
 	        Convey("Status Code Should Be 200", func() {
@@ -547,40 +545,43 @@ func createAPI(cmd *commands.Command, args []string) int {
 	output := cmd.Out()
 
 	if len(args) < 1 {
-		beeLogger.Log.Fatal("Argument [appname] is missing")
+		asanaLogger.Log.Fatal("Argument [appname] is missing")
 	}
 
 	if len(args) > 1 {
 		err := cmd.Flag.Parse(args[1:])
 		if err != nil {
-			beeLogger.Log.Error(err.Error())
+			asanaLogger.Log.Error(err.Error())
 		}
 	}
 
 	appPath, packPath, err := utils.CheckEnv(args[0])
+	appName := path.Base(args[0])
 	if err != nil {
-		beeLogger.Log.Fatalf("%s", err)
+		asanaLogger.Log.Fatalf("%s", err)
 	}
 	if generate.SQLDriver == "" {
 		generate.SQLDriver = "mysql"
 	}
 
-	beeLogger.Log.Info("Creating API...")
+	asanaLogger.Log.Info("Creating API...")
 
-	os.MkdirAll(appPath, 0755)
-	fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", appPath, "\x1b[0m")
-	os.Mkdir(path.Join(appPath, "conf"), 0755)
-	fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf"), "\x1b[0m")
-	os.Mkdir(path.Join(appPath, "controllers"), 0755)
-	fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "controllers"), "\x1b[0m")
-	os.Mkdir(path.Join(appPath, "tests"), 0755)
-	fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "tests"), "\x1b[0m")
-	fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.conf"), "\x1b[0m")
-	utils.WriteToFile(path.Join(appPath, "conf", "app.conf"),
-		strings.Replace(apiconf, "{{.Appname}}", path.Base(args[0]), -1))
+	_ = os.MkdirAll(appPath, 0755)
+	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", appPath, "\x1b[0m")
+	_ = os.Mkdir(path.Join(appPath, "conf"), 0755)
+	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf"), "\x1b[0m")
+	_ = os.Mkdir(path.Join(appPath, "controllers"), 0755)
+	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "controllers"), "\x1b[0m")
+	_ = os.Mkdir(path.Join(appPath, "tests"), 0755)
+	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "tests"), "\x1b[0m")
 
 	if generate.SQLConn != "" {
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "main.go"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.conf"), "\x1b[0m")
+		confContent := strings.Replace(apiconf, "{{.Appname}}", appName, -1)
+		confContent = strings.Replace(confContent, "{{.SQLConnStr}}", generate.SQLConn.String(), -1)
+		utils.WriteToFile(path.Join(appPath, "conf", "app.conf"), confContent)
+
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "main.go"), "\x1b[0m")
 		mainGoContent := strings.Replace(apiMainconngo, "{{.Appname}}", packPath, -1)
 		mainGoContent = strings.Replace(mainGoContent, "{{.DriverName}}", string(generate.SQLDriver), -1)
 		if generate.SQLDriver == "mysql" {
@@ -596,42 +597,47 @@ func createAPI(cmd *commands.Command, args []string) int {
 				-1,
 			),
 		)
-		beeLogger.Log.Infof("Using '%s' as 'driver'", generate.SQLDriver)
-		beeLogger.Log.Infof("Using '%s' as 'conn'", generate.SQLConn)
-		beeLogger.Log.Infof("Using '%s' as 'tables'", generate.Tables)
+		asanaLogger.Log.Infof("Using '%s' as 'driver'", generate.SQLDriver)
+		asanaLogger.Log.Infof("Using '%s' as 'conn'", generate.SQLConn)
+		asanaLogger.Log.Infof("Using '%s' as 'tables'", generate.Tables)
 		generate.GenerateAppcode(string(generate.SQLDriver), string(generate.SQLConn), "3", string(generate.Tables), appPath)
 	} else {
-		os.Mkdir(path.Join(appPath, "models"), 0755)
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models"), "\x1b[0m")
-		os.Mkdir(path.Join(appPath, "routers"), 0755)
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "routers")+string(path.Separator), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.conf"), "\x1b[0m")
+		confContent := strings.Replace(apiconf, "{{.Appname}}", appName, -1)
+		confContent = strings.Replace(confContent, "{{.SQLConnStr}}", "", -1)
+		utils.WriteToFile(path.Join(appPath, "conf", "app.conf"), confContent)
 
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "controllers", "object.go"), "\x1b[0m")
+		_ = os.Mkdir(path.Join(appPath, "models"), 0755)
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models"), "\x1b[0m")
+		_ = os.Mkdir(path.Join(appPath, "routers"), 0755)
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "routers")+string(path.Separator), "\x1b[0m")
+
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "controllers", "object.go"), "\x1b[0m")
 		utils.WriteToFile(path.Join(appPath, "controllers", "object.go"),
 			strings.Replace(apiControllers, "{{.Appname}}", packPath, -1))
 
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "controllers", "user.go"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "controllers", "user.go"), "\x1b[0m")
 		utils.WriteToFile(path.Join(appPath, "controllers", "user.go"),
 			strings.Replace(apiControllers2, "{{.Appname}}", packPath, -1))
 
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "tests", "default_test.go"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "tests", "default_test.go"), "\x1b[0m")
 		utils.WriteToFile(path.Join(appPath, "tests", "default_test.go"),
 			strings.Replace(apiTests, "{{.Appname}}", packPath, -1))
 
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "routers", "router.go"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "routers", "router.go"), "\x1b[0m")
 		utils.WriteToFile(path.Join(appPath, "routers", "router.go"),
 			strings.Replace(apirouter, "{{.Appname}}", packPath, -1))
 
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models", "object.go"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models", "object.go"), "\x1b[0m")
 		utils.WriteToFile(path.Join(appPath, "models", "object.go"), APIModels)
 
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models", "user.go"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models", "user.go"), "\x1b[0m")
 		utils.WriteToFile(path.Join(appPath, "models", "user.go"), APIModels2)
 
-		fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "main.go"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "main.go"), "\x1b[0m")
 		utils.WriteToFile(path.Join(appPath, "main.go"),
 			strings.Replace(apiMaingo, "{{.Appname}}", packPath, -1))
 	}
-	beeLogger.Log.Success("New API successfully created!")
+	asanaLogger.Log.Success("New API successfully created!")
 	return 0
 }

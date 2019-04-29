@@ -1,4 +1,4 @@
-// Copyright 2013 bee authors
+// Copyright 2019 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -23,12 +23,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/beego/bee/cmd/commands"
-	"github.com/beego/bee/cmd/commands/version"
-	"github.com/beego/bee/config"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/cmd/commands"
+	"github.com/goasana/asana/cmd/commands/version"
+	"github.com/goasana/asana/config"
+	"github.com/goasana/asana/utils"
 
-	beeLogger "github.com/beego/bee/logger"
+	asanaLogger "github.com/goasana/asana/logger"
 )
 
 var CmdMigrate = &commands.Command{
@@ -38,19 +38,19 @@ var CmdMigrate = &commands.Command{
 
   ▶ {{"To run all the migrations:"|bold}}
 
-    $ bee migrate [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"]
+    $ asana migrate [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"] [-dir="path/to/migration"]
 
   ▶ {{"To rollback the last migration:"|bold}}
 
-    $ bee migrate rollback [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"]
+    $ asana migrate rollback [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"] [-dir="path/to/migration"]
 
   ▶ {{"To do a reset, which will rollback all the migrations:"|bold}}
 
-    $ bee migrate reset [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"]
+    $ asana migrate reset [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"] [-dir="path/to/migration"]
 
   ▶ {{"To update your schema:"|bold}}
 
-    $ bee migrate refresh [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"]
+    $ asana migrate refresh [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"] [-dir="path/to/migration"]
 `,
 	PreRun: func(cmd *commands.Command, args []string) { version.ShowShortVersionBanner() },
 	Run:    RunMigration,
@@ -58,10 +58,12 @@ var CmdMigrate = &commands.Command{
 
 var mDriver utils.DocValue
 var mConn utils.DocValue
+var mDir utils.DocValue
 
 func init() {
 	CmdMigrate.Flag.Var(&mDriver, "driver", "Database driver. Either mysql, postgres or sqlite.")
 	CmdMigrate.Flag.Var(&mConn, "conn", "Connection string used by the driver to connect to a database instance.")
+	CmdMigrate.Flag.Var(&mDir, "dir", "The directory where the migration files are stored")
 	commands.AvailableCommands = append(commands.AvailableCommands, CmdMigrate)
 }
 
@@ -71,12 +73,12 @@ func RunMigration(cmd *commands.Command, args []string) int {
 
 	gps := utils.GetGOPATHs()
 	if len(gps) == 0 {
-		beeLogger.Log.Fatal("GOPATH environment variable is not set or empty")
+		asanaLogger.Log.Fatal("GOPATH environment variable is not set or empty")
 	}
 
 	gopath := gps[0]
 
-	beeLogger.Log.Debugf("GOPATH: %s", utils.FILE(), utils.LINE(), gopath)
+	asanaLogger.Log.Debugf("GOPATH: %s", utils.FILE(), utils.LINE(), gopath)
 
 	// Getting command line arguments
 	if len(args) != 0 {
@@ -94,36 +96,54 @@ func RunMigration(cmd *commands.Command, args []string) int {
 			mConn = "root:@tcp(127.0.0.1:3306)/test"
 		}
 	}
-	beeLogger.Log.Infof("Using '%s' as 'driver'", mDriver)
-	beeLogger.Log.Infof("Using '%s' as 'conn'", mConn)
-	driverStr, connStr := string(mDriver), string(mConn)
+	if mDir == "" {
+		mDir = utils.DocValue(config.Conf.Database.Dir)
+		if mDir == "" {
+			mDir = utils.DocValue(path.Join(currpath, "database", "migrations"))
+		}
+	}
+
+	asanaLogger.Log.Infof("Using '%s' as 'driver'", mDriver)
+	//Log sensitive connection information only when DEBUG is set to true.
+	asanaLogger.Log.Debugf("Conn: %s", utils.FILE(), utils.LINE(), mConn)
+	asanaLogger.Log.Infof("Using '%s' as 'dir'", mDir)
+	driverStr, connStr, dirStr := string(mDriver), string(mConn), string(mDir)
+
+	dirRune := []rune(dirStr)
+
+	if dirRune[0] != '/' && dirRune[1] != ':' {
+		dirStr = path.Join(currpath, dirStr)
+	}
+
 	if len(args) == 0 {
 		// run all outstanding migrations
-		beeLogger.Log.Info("Running all outstanding migrations")
-		MigrateUpdate(currpath, driverStr, connStr)
+		asanaLogger.Log.Info("Running all outstanding migrations")
+		MigrateUpdate(currpath, driverStr, connStr, dirStr)
 	} else {
 		mcmd := args[0]
 		switch mcmd {
 		case "rollback":
-			beeLogger.Log.Info("Rolling back the last migration operation")
-			MigrateRollback(currpath, driverStr, connStr)
+			asanaLogger.Log.Info("Rolling back the last migration operation")
+			MigrateRollback(currpath, driverStr, connStr, dirStr)
 		case "reset":
-			beeLogger.Log.Info("Reseting all migrations")
-			MigrateReset(currpath, driverStr, connStr)
+			asanaLogger.Log.Info("Reseting all migrations")
+			MigrateReset(currpath, driverStr, connStr, dirStr)
 		case "refresh":
-			beeLogger.Log.Info("Refreshing all migrations")
-			MigrateRefresh(currpath, driverStr, connStr)
+			asanaLogger.Log.Info("Refreshing all migrations")
+			MigrateRefresh(currpath, driverStr, connStr, dirStr)
 		default:
-			beeLogger.Log.Fatal("Command is missing")
+			asanaLogger.Log.Fatal("Command is missing")
 		}
 	}
-	beeLogger.Log.Success("Migration successful!")
+	asanaLogger.Log.Success("Migration successful!")
 	return 0
 }
 
 // migrate generates source code, build it, and invoke the binary who does the actual migration
-func migrate(goal, currpath, driver, connStr string) {
-	dir := path.Join(currpath, "database", "migrations")
+func migrate(goal, currpath, driver, connStr, dir string) {
+	if dir == "" {
+		dir = path.Join(currpath, "database", "migrations")
+	}
 	postfix := ""
 	if runtime.GOOS == "windows" {
 		postfix = ".exe"
@@ -134,7 +154,7 @@ func migrate(goal, currpath, driver, connStr string) {
 	// Connect to database
 	db, err := sql.Open(driver, connStr)
 	if err != nil {
-		beeLogger.Log.Fatalf("Could not connect to database using '%s': %s", connStr, err)
+		asanaLogger.Log.Fatalf("Could not connect to database using '%s': %s", connStr, err)
 	}
 	defer db.Close()
 
@@ -152,44 +172,44 @@ func migrate(goal, currpath, driver, connStr string) {
 func checkForSchemaUpdateTable(db *sql.DB, driver string) {
 	showTableSQL := showMigrationsTableSQL(driver)
 	if rows, err := db.Query(showTableSQL); err != nil {
-		beeLogger.Log.Fatalf("Could not show migrations table: %s", err)
+		asanaLogger.Log.Fatalf("Could not show migrations table: %s", err)
 	} else if !rows.Next() {
 		// No migrations table, create new ones
 		createTableSQL := createMigrationsTableSQL(driver)
 
-		beeLogger.Log.Infof("Creating 'migrations' table...")
+		asanaLogger.Log.Infof("Creating 'migrations' table...")
 
 		if _, err := db.Query(createTableSQL); err != nil {
-			beeLogger.Log.Fatalf("Could not create migrations table: %s", err)
+			asanaLogger.Log.Fatalf("Could not create migrations table: %s", err)
 		}
 	}
 
 	// Checking that migrations table schema are expected
 	selectTableSQL := selectMigrationsTableSQL(driver)
 	if rows, err := db.Query(selectTableSQL); err != nil {
-		beeLogger.Log.Fatalf("Could not show columns of migrations table: %s", err)
+		asanaLogger.Log.Fatalf("Could not show columns of migrations table: %s", err)
 	} else {
 		for rows.Next() {
 			var fieldBytes, typeBytes, nullBytes, keyBytes, defaultBytes, extraBytes []byte
 			if err := rows.Scan(&fieldBytes, &typeBytes, &nullBytes, &keyBytes, &defaultBytes, &extraBytes); err != nil {
-				beeLogger.Log.Fatalf("Could not read column information: %s", err)
+				asanaLogger.Log.Fatalf("Could not read column information: %s", err)
 			}
 			fieldStr, typeStr, nullStr, keyStr, defaultStr, extraStr :=
 				string(fieldBytes), string(typeBytes), string(nullBytes), string(keyBytes), string(defaultBytes), string(extraBytes)
 			if fieldStr == "id_migration" {
 				if keyStr != "PRI" || extraStr != "auto_increment" {
-					beeLogger.Log.Hint("Expecting KEY: PRI, EXTRA: auto_increment")
-					beeLogger.Log.Fatalf("Column migration.id_migration type mismatch: KEY: %s, EXTRA: %s", keyStr, extraStr)
+					asanaLogger.Log.Hint("Expecting KEY: PRI, EXTRA: auto_increment")
+					asanaLogger.Log.Fatalf("Column migration.id_migration type mismatch: KEY: %s, EXTRA: %s", keyStr, extraStr)
 				}
 			} else if fieldStr == "name" {
 				if !strings.HasPrefix(typeStr, "varchar") || nullStr != "YES" {
-					beeLogger.Log.Hint("Expecting TYPE: varchar, NULL: YES")
-					beeLogger.Log.Fatalf("Column migration.name type mismatch: TYPE: %s, NULL: %s", typeStr, nullStr)
+					asanaLogger.Log.Hint("Expecting TYPE: varchar, NULL: YES")
+					asanaLogger.Log.Fatalf("Column migration.name type mismatch: TYPE: %s, NULL: %s", typeStr, nullStr)
 				}
 			} else if fieldStr == "created_at" {
 				if typeStr != "timestamp" || defaultStr != "CURRENT_TIMESTAMP" {
-					beeLogger.Log.Hint("Expecting TYPE: timestamp, DEFAULT: CURRENT_TIMESTAMP")
-					beeLogger.Log.Fatalf("Column migration.timestamp type mismatch: TYPE: %s, DEFAULT: %s", typeStr, defaultStr)
+					asanaLogger.Log.Hint("Expecting TYPE: timestamp, DEFAULT: CURRENT_TIMESTAMP")
+					asanaLogger.Log.Fatalf("Column migration.timestamp type mismatch: TYPE: %s, DEFAULT: %s", typeStr, defaultStr)
 				}
 			}
 		}
@@ -244,22 +264,22 @@ func selectMigrationsTableSQL(driver string) string {
 func getLatestMigration(db *sql.DB, goal string) (file string, createdAt int64) {
 	sql := "SELECT name FROM migrations where status = 'update' ORDER BY id_migration DESC LIMIT 1"
 	if rows, err := db.Query(sql); err != nil {
-		beeLogger.Log.Fatalf("Could not retrieve migrations: %s", err)
+		asanaLogger.Log.Fatalf("Could not retrieve migrations: %s", err)
 	} else {
 		if rows.Next() {
 			if err := rows.Scan(&file); err != nil {
-				beeLogger.Log.Fatalf("Could not read migrations in database: %s", err)
+				asanaLogger.Log.Fatalf("Could not read migrations in database: %s", err)
 			}
 			createdAtStr := file[len(file)-15:]
 			if t, err := time.Parse("20060102_150405", createdAtStr); err != nil {
-				beeLogger.Log.Fatalf("Could not parse time: %s", err)
+				asanaLogger.Log.Fatalf("Could not parse time: %s", err)
 			} else {
 				createdAt = t.Unix()
 			}
 		} else {
 			// migration table has no 'update' record, no point rolling back
 			if goal == "rollback" {
-				beeLogger.Log.Fatal("There is nothing to rollback")
+				asanaLogger.Log.Fatal("There is nothing to rollback")
 			}
 			file, createdAt = "", 0
 		}
@@ -271,7 +291,7 @@ func getLatestMigration(db *sql.DB, goal string) (file string, createdAt int64) 
 func writeMigrationSourceFile(dir, source, driver, connStr string, latestTime int64, latestName string, task string) {
 	changeDir(dir)
 	if f, err := os.OpenFile(source, os.O_CREATE|os.O_EXCL|os.O_RDWR, 0666); err != nil {
-		beeLogger.Log.Fatalf("Could not create file: %s", err)
+		asanaLogger.Log.Fatalf("Could not create file: %s", err)
 	} else {
 		content := strings.Replace(MigrationMainTPL, "{{DBDriver}}", driver, -1)
 		content = strings.Replace(content, "{{DriverRepo}}", driverImportStatement(driver), -1)
@@ -280,7 +300,7 @@ func writeMigrationSourceFile(dir, source, driver, connStr string, latestTime in
 		content = strings.Replace(content, "{{LatestName}}", latestName, -1)
 		content = strings.Replace(content, "{{Task}}", task, -1)
 		if _, err := f.WriteString(content); err != nil {
-			beeLogger.Log.Fatalf("Could not write to file: %s", err)
+			asanaLogger.Log.Fatalf("Could not write to file: %s", err)
 		}
 		utils.CloseFile(f)
 	}
@@ -291,7 +311,7 @@ func buildMigrationBinary(dir, binary string) {
 	changeDir(dir)
 	cmd := exec.Command("go", "build", "-o", binary)
 	if out, err := cmd.CombinedOutput(); err != nil {
-		beeLogger.Log.Errorf("Could not build migration binary: %s", err)
+		asanaLogger.Log.Errorf("Could not build migration binary: %s", err)
 		formatShellErrOutput(string(out))
 		removeTempFile(dir, binary)
 		removeTempFile(dir, binary+".go")
@@ -305,7 +325,7 @@ func runMigrationBinary(dir, binary string) {
 	cmd := exec.Command("./" + binary)
 	if out, err := cmd.CombinedOutput(); err != nil {
 		formatShellOutput(string(out))
-		beeLogger.Log.Errorf("Could not run migration binary: %s", err)
+		asanaLogger.Log.Errorf("Could not run migration binary: %s", err)
 		removeTempFile(dir, binary)
 		removeTempFile(dir, binary+".go")
 		os.Exit(2)
@@ -318,7 +338,7 @@ func runMigrationBinary(dir, binary string) {
 // It exits the system when encouter an error
 func changeDir(dir string) {
 	if err := os.Chdir(dir); err != nil {
-		beeLogger.Log.Fatalf("Could not find migration directory: %s", err)
+		asanaLogger.Log.Fatalf("Could not find migration directory: %s", err)
 	}
 }
 
@@ -326,7 +346,7 @@ func changeDir(dir string) {
 func removeTempFile(dir, file string) {
 	changeDir(dir)
 	if err := os.Remove(file); err != nil {
-		beeLogger.Log.Warnf("Could not remove temporary file: %s", err)
+		asanaLogger.Log.Warnf("Could not remove temporary file: %s", err)
 	}
 }
 
@@ -334,7 +354,7 @@ func removeTempFile(dir, file string) {
 func formatShellErrOutput(o string) {
 	for _, line := range strings.Split(o, "\n") {
 		if line != "" {
-			beeLogger.Log.Errorf("|> %s", line)
+			asanaLogger.Log.Errorf("|> %s", line)
 		}
 	}
 }
@@ -343,7 +363,7 @@ func formatShellErrOutput(o string) {
 func formatShellOutput(o string) {
 	for _, line := range strings.Split(o, "\n") {
 		if line != "" {
-			beeLogger.Log.Infof("|> %s", line)
+			asanaLogger.Log.Infof("|> %s", line)
 		}
 	}
 }
@@ -355,8 +375,8 @@ const (
 import(
 	"os"
 
-	"github.com/astaxie/beego/orm"
-	"github.com/astaxie/beego/migration"
+	"github.com/goasana/framework/orm"
+	"github.com/goasana/framework/migration"
 
 	_ "{{DriverRepo}}"
 )
@@ -415,21 +435,21 @@ CREATE TABLE migrations (
 )
 
 // MigrateUpdate does the schema update
-func MigrateUpdate(currpath, driver, connStr string) {
-	migrate("upgrade", currpath, driver, connStr)
+func MigrateUpdate(currpath, driver, connStr, dir string) {
+	migrate("upgrade", currpath, driver, connStr, dir)
 }
 
 // MigrateRollback rolls back the latest migration
-func MigrateRollback(currpath, driver, connStr string) {
-	migrate("rollback", currpath, driver, connStr)
+func MigrateRollback(currpath, driver, connStr, dir string) {
+	migrate("rollback", currpath, driver, connStr, dir)
 }
 
 // MigrateReset rolls back all migrations
-func MigrateReset(currpath, driver, connStr string) {
-	migrate("reset", currpath, driver, connStr)
+func MigrateReset(currpath, driver, connStr, dir string) {
+	migrate("reset", currpath, driver, connStr, dir)
 }
 
-// migrationRefresh rolls back all migrations and start over again
-func MigrateRefresh(currpath, driver, connStr string) {
-	migrate("refresh", currpath, driver, connStr)
+// MigrateRefresh rolls back all migrations and start over again
+func MigrateRefresh(currpath, driver, connStr, dir string) {
+	migrate("refresh", currpath, driver, connStr, dir)
 }

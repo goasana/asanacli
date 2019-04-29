@@ -14,21 +14,21 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/beego/bee/cmd/commands"
-	beeLogger "github.com/beego/bee/logger"
-	"github.com/beego/bee/logger/colors"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/cmd/commands"
+	asanaLogger "github.com/goasana/asana/logger"
+	"github.com/goasana/asana/logger/colors"
+	"github.com/goasana/asana/utils"
 	"gopkg.in/yaml.v2"
 )
 
 const verboseVersionBanner string = `%s%s______
-| ___ \
-| |_/ /  ___   ___
-| ___ \ / _ \ / _ \
-| |_/ /|  __/|  __/
-\____/  \___| \___| v{{ .BeeVersion }}%s
+    ___   _____ ___    _   _____ 
+   /   | / ___//   |  / | / /   |
+  / /| | \__ \/ /| | /  |/ / /| |
+ / ___ |___/ / ___ |/ /|  / ___ |
+/_/  |_/____/_/  |_/_/ |_/_/  |_| v{{ .AsanaVersion }}%s
 %s%s
-├── Beego     : {{ .BeegoVersion }}
+├── Asana     : {{ .AsanaFrameworkVersion }}
 ├── GoVersion : {{ .GoVersion }}
 ├── GOOS      : {{ .GOOS }}
 ├── GOARCH    : {{ .GOARCH }}
@@ -40,24 +40,24 @@ const verboseVersionBanner string = `%s%s______
 `
 
 const shortVersionBanner = `______
-| ___ \
-| |_/ /  ___   ___
-| ___ \ / _ \ / _ \
-| |_/ /|  __/|  __/
-\____/  \___| \___| v{{ .BeeVersion }}
+    ___   _____ ___    _   _____ 
+   /   | / ___//   |  / | / /   |
+  / /| | \__ \/ /| | /  |/ / /| |
+ / ___ |___/ / ___ |/ /|  / ___ |
+/_/  |_/____/_/  |_/_/ |_/_/  |_|  v{{ .AsanaVersion }}
 `
 
 var CmdVersion = &commands.Command{
 	UsageLine: "version",
-	Short:     "Prints the current Bee version",
+	Short:     "Prints the current Asana version",
 	Long: `
-Prints the current Bee, Beego and Go version alongside the platform information.
+Prints the current Asana, Asana and Go version alongside the platform information.
 `,
 	Run: versionCmd,
 }
 var outputFormat string
 
-const version = "1.10.0"
+const version = "1.0"
 
 func init() {
 	fs := flag.NewFlagSet("version", flag.ContinueOnError)
@@ -81,14 +81,14 @@ func versionCmd(cmd *commands.Command, args []string) int {
 			runtime.GOROOT(),
 			runtime.Compiler,
 			version,
-			GetBeegoVersion(),
+			GetAsanaVersion(),
 		}
 		switch outputFormat {
 		case "json":
 			{
 				b, err := json.MarshalIndent(runtimeInfo, "", "    ")
 				if err != nil {
-					beeLogger.Log.Error(err.Error())
+					asanaLogger.Log.Error(err.Error())
 				}
 				fmt.Println(string(b))
 				return 0
@@ -97,7 +97,7 @@ func versionCmd(cmd *commands.Command, args []string) int {
 			{
 				b, err := yaml.Marshal(&runtimeInfo)
 				if err != nil {
-					beeLogger.Log.Error(err.Error())
+					asanaLogger.Log.Error(err.Error())
 				}
 				fmt.Println(string(b))
 				return 0
@@ -117,29 +117,29 @@ func ShowShortVersionBanner() {
 	InitBanner(output, bytes.NewBufferString(colors.MagentaBold(shortVersionBanner)))
 }
 
-func GetBeegoVersion() string {
+func GetAsanaVersion() string {
 	re, err := regexp.Compile(`VERSION = "([0-9.]+)"`)
 	if err != nil {
 		return ""
 	}
 	wgopath := utils.GetGOPATHs()
 	if len(wgopath) == 0 {
-		beeLogger.Log.Error("You need to set GOPATH environment variable")
+		asanaLogger.Log.Error("You need to set GOPATH environment variable")
 		return ""
 	}
 	for _, wg := range wgopath {
-		wg, _ = path.EvalSymlinks(path.Join(wg, "src", "github.com", "astaxie", "beego"))
-		filename := path.Join(wg, "beego.go")
+		wg, _ = path.EvalSymlinks(path.Join(wg, "src", "github.com", "goasana", "framework"))
+		filename := path.Join(wg, "asana.go")
 		_, err := os.Stat(filename)
 		if err != nil {
 			if os.IsNotExist(err) {
 				continue
 			}
-			beeLogger.Log.Error("Error while getting stats of 'beego.go'")
+			asanaLogger.Log.Error("Error while getting stats of 'asana.go'")
 		}
 		fd, err := os.Open(filename)
 		if err != nil {
-			beeLogger.Log.Error("Error while reading 'beego.go'")
+			asanaLogger.Log.Error("Error while reading 'asana.go'")
 			continue
 		}
 		reader := bufio.NewReader(fd)
@@ -159,7 +159,7 @@ func GetBeegoVersion() string {
 		}
 
 	}
-	return "Beego is not installed. Please do consider installing it first: https://github.com/astaxie/beego"
+	return "Asana is not installed. Please do consider installing it first: https://github.com/goasana/framework"
 }
 
 func GetGoVersion() string {
@@ -169,7 +169,7 @@ func GetGoVersion() string {
 	)
 
 	if cmdOut, err = exec.Command("go", "version").Output(); err != nil {
-		beeLogger.Log.Fatalf("There was an error running 'go version' command: %s", err)
+		asanaLogger.Log.Fatalf("There was an error running 'go version' command: %s", err)
 	}
 	return strings.Split(string(cmdOut), " ")[2]
 }

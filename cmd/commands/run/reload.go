@@ -1,4 +1,4 @@
-// Copyright 2017 bee authors
+// Copyright 2017 asana authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -18,7 +18,7 @@ import (
 	"net/http"
 	"time"
 
-	beeLogger "github.com/beego/bee/logger"
+	asanaLogger "github.com/goasana/asana/logger"
 	"github.com/gorilla/websocket"
 )
 
@@ -71,7 +71,7 @@ func (c *wsClient) readPump() {
 		_, _, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
-				beeLogger.Log.Errorf("An error happened when reading from the Websocket client: %v", err)
+				asanaLogger.Log.Errorf("An error happened when reading from the Websocket client: %v", err)
 			}
 			break
 		}
@@ -80,7 +80,7 @@ func (c *wsClient) readPump() {
 
 // write writes a message with the given message type and payload.
 func (c *wsClient) write(mt int, payload []byte) error {
-	c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+	_ = c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 	return c.conn.WriteMessage(mt, payload)
 }
 
@@ -89,7 +89,7 @@ func (c *wsClient) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
-		c.conn.Close()
+		_ = c.conn.Close()
 	}()
 
 	for {
@@ -97,21 +97,21 @@ func (c *wsClient) writePump() {
 		case message, ok := <-c.send:
 			if !ok {
 				// The broker closed the channel.
-				c.write(websocket.CloseMessage, []byte{})
+				_ = c.write(websocket.CloseMessage, []byte{})
 				return
 			}
 
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			_ = c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			w, err := c.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
 				return
 			}
-			w.Write(message)
+			_, _ = w.Write(message)
 
 			n := len(c.send)
 			for i := 0; i < n; i++ {
-				w.Write([]byte("/n"))
-				w.Write(<-c.send)
+				_, _ = w.Write([]byte("/n"))
+				_, _ = w.Write(<-c.send)
 			}
 
 			if err := w.Close(); err != nil {
@@ -156,13 +156,13 @@ func startReloadServer() {
 	})
 
 	go startServer()
-	beeLogger.Log.Infof("Reload server listening at %s", reloadAddress)
+	asanaLogger.Log.Infof("Reload server listening at %s", reloadAddress)
 }
 
 func startServer() {
 	err := http.ListenAndServe(reloadAddress, nil)
 	if err != nil {
-		beeLogger.Log.Errorf("Failed to start up the Reload server: %v", err)
+		asanaLogger.Log.Errorf("Failed to start up the Reload server: %v", err)
 		return
 	}
 }
@@ -176,7 +176,7 @@ func sendReload(payload string) {
 func handleWsRequest(broker *wsBroker, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		beeLogger.Log.Errorf("error while upgrading server connection: %v", err)
+		asanaLogger.Log.Errorf("error while upgrading server connection: %v", err)
 		return
 	}
 

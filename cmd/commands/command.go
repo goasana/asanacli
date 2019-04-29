@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/beego/bee/logger/colors"
-	"github.com/beego/bee/utils"
+	"github.com/goasana/asana/logger/colors"
+	"github.com/goasana/asana/utils"
 )
 
 // Command is the unit of execution
@@ -41,7 +41,7 @@ type Command struct {
 }
 
 var AvailableCommands = []*Command{}
-var cmdUsage = `Use {{printf "bee help %s" .Name | bold}} for more information.{{endline}}`
+var cmdUsage = `Use {{printf "asana help %s" .Name | bold}} for more information.{{endline}}`
 
 // Name returns the command's name: the first word in the Usage line.
 func (c *Command) Name() string {
