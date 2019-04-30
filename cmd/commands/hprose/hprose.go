@@ -56,11 +56,11 @@ func createhprose(cmd *commands.Command, args []string) int {
 		asanaLogger.Log.Fatal("Argument [appname] is missing")
 	}
 
-	curpath, _ := os.Getwd()
+	curPath, _ := os.Getwd()
 	if len(args) > 1 {
-		cmd.Flag.Parse(args[1:])
+		_ = cmd.Flag.Parse(args[1:])
 	}
-	apppath, packpath, err := utils.CheckEnv(args[0])
+	appPath, packpath, err := utils.CheckEnv(args[0])
 	if err != nil {
 		asanaLogger.Log.Fatalf("%s", err)
 	}
@@ -69,20 +69,20 @@ func createhprose(cmd *commands.Command, args []string) int {
 	}
 	asanaLogger.Log.Info("Creating Hprose application...")
 
-	_ = os.MkdirAll(apppath, 0755)
-	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", apppath, "\x1b[0m")
-	_ = os.Mkdir(path.Join(apppath, "conf"), 0755)
-	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "conf"), "\x1b[0m")
-	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "conf", "app.yaml"), "\x1b[0m")
-	utils.WriteToFile(path.Join(apppath, "conf", "app.yaml"), strings.Replace(generate.Hproseconf, "{{.Appname}}", args[0], -1))
+	_ = os.MkdirAll(appPath, 0755)
+	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", appPath, "\x1b[0m")
+	_ = os.Mkdir(path.Join(appPath, "conf"), 0755)
+	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf"), "\x1b[0m")
+	_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "conf", "app.yaml"), "\x1b[0m")
+	utils.WriteToFile(path.Join(appPath, "conf", "app.yaml"), strings.Replace(generate.Hproseconf, "{{.Appname}}", args[0], -1))
 
 	if generate.SQLConn != "" {
 		asanaLogger.Log.Infof("Using '%s' as 'driver'", generate.SQLDriver)
 		asanaLogger.Log.Infof("Using '%s' as 'conn'", generate.SQLConn)
 		asanaLogger.Log.Infof("Using '%s' as 'tables'", generate.Tables)
-		generate.GenerateHproseAppcode(string(generate.SQLDriver), string(generate.SQLConn), "1", string(generate.Tables), path.Join(curpath, args[0]))
+		generate.GenerateHproseAppcode(string(generate.SQLDriver), string(generate.SQLConn), "1", string(generate.Tables), path.Join(curPath, args[0]))
 
-		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "main.go"), "\x1b[0m")
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "main.go"), "\x1b[0m")
 		maingoContent := strings.Replace(generate.HproseMainconngo, "{{.Appname}}", packpath, -1)
 		maingoContent = strings.Replace(maingoContent, "{{.DriverName}}", string(generate.SQLDriver), -1)
 		maingoContent = strings.Replace(maingoContent, "{{HproseFunctionList}}", strings.Join(generate.HproseAddFunctions, ""), -1)
@@ -91,7 +91,7 @@ func createhprose(cmd *commands.Command, args []string) int {
 		} else if generate.SQLDriver == "postgres" {
 			maingoContent = strings.Replace(maingoContent, "{{.DriverPkg}}", `_ "github.com/lib/pq"`, -1)
 		}
-		utils.WriteToFile(path.Join(apppath, "main.go"),
+		utils.WriteToFile(path.Join(appPath, "main.go"),
 			strings.Replace(
 				maingoContent,
 				"{{.conn}}",
@@ -100,17 +100,17 @@ func createhprose(cmd *commands.Command, args []string) int {
 			),
 		)
 	} else {
-		_ = os.Mkdir(path.Join(apppath, "models"), 0755)
-		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "models"), "\x1b[0m")
+		_ = os.Mkdir(path.Join(appPath, "models"), 0755)
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models"), "\x1b[0m")
 
-		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "models", "object.go"), "\x1b[0m")
-		utils.WriteToFile(path.Join(apppath, "models", "object.go"), apiapp.APIModels)
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models", "object.go"), "\x1b[0m")
+		utils.WriteToFile(path.Join(appPath, "models", "object.go"), apiapp.APIModels)
 
-		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "models", "user.go"), "\x1b[0m")
-		utils.WriteToFile(path.Join(apppath, "models", "user.go"), apiapp.APIModels2)
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "models", "user.go"), "\x1b[0m")
+		utils.WriteToFile(path.Join(appPath, "models", "user.go"), apiapp.APIModels2)
 
-		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(apppath, "main.go"), "\x1b[0m")
-		utils.WriteToFile(path.Join(apppath, "main.go"),
+		_, _ = fmt.Fprintf(output, "\t%s%screate%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", path.Join(appPath, "main.go"), "\x1b[0m")
+		utils.WriteToFile(path.Join(appPath, "main.go"),
 			strings.Replace(generate.HproseMaingo, "{{.Appname}}", packpath, -1))
 	}
 	asanaLogger.Log.Success("New Hprose application successfully created!")

@@ -57,9 +57,9 @@ Creates a Asana application for the given app name in the current directory.
 	Run:    CreateApp,
 }
 
-var appconf = `appname = {{.Appname}}
-httpport = 8080
-runmode = dev
+var appconf = `appname: {{.Appname}}
+httpport: 8080
+runmode: dev
 `
 
 var maingo = `package main
@@ -141,7 +141,7 @@ type MainController struct {
 
 func (c *MainController) Get() {
 	c.Data["Website"] = "asana.me"
-	c.Data["Email"] = "astaxie@gmail.com"
+	c.Data["Email"] = "asana@gmail.com"
 	c.TplName = "index.tpl"
 }
 `

@@ -50,9 +50,9 @@ func init() {
 	commands.AvailableCommands = append(commands.AvailableCommands, CmdBale)
 }
 
-func runBale(cmd *commands.Command, args []string) int {
-	os.RemoveAll("bale")
-	os.Mkdir("bale", os.ModePerm)
+func runBale(_ *commands.Command, _ []string) int {
+	_ = os.RemoveAll("bale")
+	_ = os.Mkdir("bale", os.ModePerm)
 
 	// Pack and compress data
 	for _, p := range config.Conf.Bale.Dirs {
@@ -165,7 +165,7 @@ func walkFn(resPath string, info os.FileInfo, _ error) error {
 	resPath = strings.Replace(resPath, sep, "_4_", -1)
 
 	// Create corresponding Go source files
-	os.MkdirAll(path.Dir(resPath), os.ModePerm)
+	_ = os.MkdirAll(path.Dir(resPath), os.ModePerm)
 	fw, err := os.Create("bale/" + resPath + ".go")
 	if err != nil {
 		asanaLogger.Log.Fatalf("Failed to create file: %s", err)
@@ -173,15 +173,15 @@ func walkFn(resPath string, info os.FileInfo, _ error) error {
 	defer fw.Close()
 
 	// Write header
-	fmt.Fprintf(fw, Header, resPath)
+	_, _ = fmt.Fprintf(fw, Header, resPath)
 
 	// Copy and compress data
 	gz := gzip.NewWriter(&ByteWriter{Writer: fw})
-	io.Copy(gz, fr)
-	gz.Close()
+	_, _ = io.Copy(gz, fr)
+	_ = gz.Close()
 
 	// Write footer.
-	fmt.Fprint(fw, Footer)
+	_, _ = fmt.Fprint(fw, Footer)
 
 	resFiles = append(resFiles, resPath)
 	return nil
@@ -239,10 +239,10 @@ func (w *ByteWriter) Write(p []byte) (n int, err error) {
 
 	for n = range p {
 		if w.c%12 == 0 {
-			w.Writer.Write(newline)
+			_, _ = w.Writer.Write(newline)
 			w.c = 0
 		}
-		fmt.Fprintf(w.Writer, "0x%02x,", p[n])
+		_, _ = fmt.Fprintf(w.Writer, "0x%02x,", p[n])
 		w.c++
 	}
 	n++

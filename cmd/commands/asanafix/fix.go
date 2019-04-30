@@ -56,7 +56,7 @@ func runFix(cmd *commands.Command, args []string) int {
 			return nil
 		}
 		err = fixFile(path)
-		fmt.Fprintf(output, colors.GreenBold("\tfix\t")+"%s\n", path)
+		_, _ = fmt.Fprintf(output, colors.GreenBold("\tfix\t")+"%s\n", path)
 		if err != nil {
 			asanaLogger.Log.Errorf("Could not fix file: %s", err)
 		}

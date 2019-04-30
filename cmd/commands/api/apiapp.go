@@ -59,13 +59,13 @@ var CmdApiapp = &commands.Command{
 	PreRun: func(cmd *commands.Command, args []string) { version.ShowShortVersionBanner() },
 	Run:    createAPI,
 }
-var apiconf = `appname = {{.Appname}}
-httpport = 8080
-runmode = dev
-autorender = false
-copyrequestbody = true
-EnableDocs = true
-sqlconn = {{.SQLConnStr}}
+var apiconf = `appname: {{.Appname}}
+httpport: 8080
+runmode: dev
+autorender: false
+copyrequestbody: true
+enabledocs: true
+sqlconn: {{.SQLConnStr}}
 `
 var apiMaingo = `package main
 

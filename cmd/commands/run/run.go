@@ -168,7 +168,7 @@ func RunApp(cmd *commands.Command, args []string) int {
 	if downdoc == "true" {
 		if _, err := os.Stat(path.Join(appPath, "swagger", "index.html")); err != nil {
 			if os.IsNotExist(err) {
-				downloadFromURL(swaggerlink, "swagger.zip")
+				downloadFromURL(swaggerLink, "swagger.zip")
 				_ = unzipAndDelete("swagger.zip")
 			}
 		}

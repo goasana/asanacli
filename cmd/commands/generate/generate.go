@@ -76,7 +76,7 @@ func init() {
 }
 
 func GenerateCode(cmd *commands.Command, args []string) int {
-	currpath, _ := os.Getwd()
+	currPath, _ := os.Getwd()
 	if len(args) < 1 {
 		asanaLogger.Log.Fatal("Command is missing")
 	}
@@ -93,19 +93,19 @@ func GenerateCode(cmd *commands.Command, args []string) int {
 	gcmd := args[0]
 	switch gcmd {
 	case "scaffold":
-		scaffold(cmd, args, currpath)
+		scaffold(cmd, args, currPath)
 	case "docs":
-		swaggergen.GenerateDocs(currpath)
+		swaggergen.GenerateDocs(currPath)
 	case "appcode":
-		appCode(cmd, args, currpath)
+		appCode(cmd, args, currPath)
 	case "migration":
-		migration(cmd, args, currpath)
+		migration(cmd, args, currPath)
 	case "controller":
-		controller(args, currpath)
+		controller(args, currPath)
 	case "model":
-		model(cmd, args, currpath)
+		model(cmd, args, currPath)
 	case "view":
-		view(args, currpath)
+		view(args, currPath)
 	default:
 		asanaLogger.Log.Fatal("Command is missing")
 	}
@@ -113,12 +113,12 @@ func GenerateCode(cmd *commands.Command, args []string) int {
 	return 0
 }
 
-func scaffold(cmd *commands.Command, args []string, currpath string) {
+func scaffold(cmd *commands.Command, args []string, currPath string) {
 	if len(args) < 2 {
 		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
 	}
 
-	cmd.Flag.Parse(args[2:])
+	_ = cmd.Flag.Parse(args[2:])
 	if generate.SQLDriver == "" {
 		generate.SQLDriver = utils.DocValue(config.Conf.Database.Driver)
 		if generate.SQLDriver == "" {
@@ -136,11 +136,11 @@ func scaffold(cmd *commands.Command, args []string, currpath string) {
 		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
 	}
 	sname := args[1]
-	generate.GenerateScaffold(sname, generate.Fields.String(), currpath, generate.SQLDriver.String(), generate.SQLConn.String())
+	generate.GenerateScaffold(sname, generate.Fields.String(), currPath, generate.SQLDriver.String(), generate.SQLConn.String())
 }
 
-func appCode(cmd *commands.Command, args []string, currpath string) {
-	cmd.Flag.Parse(args[1:])
+func appCode(cmd *commands.Command, args []string, currPath string) {
+	_ = cmd.Flag.Parse(args[1:])
 	if generate.SQLDriver == "" {
 		generate.SQLDriver = utils.DocValue(config.Conf.Database.Driver)
 		if generate.SQLDriver == "" {
@@ -164,14 +164,14 @@ func appCode(cmd *commands.Command, args []string, currpath string) {
 	asanaLogger.Log.Infof("Using '%s' as 'SQLConn'", generate.SQLConn)
 	asanaLogger.Log.Infof("Using '%s' as 'Tables'", generate.Tables)
 	asanaLogger.Log.Infof("Using '%s' as 'Level'", generate.Level)
-	generate.GenerateAppcode(generate.SQLDriver.String(), generate.SQLConn.String(), generate.Level.String(), generate.Tables.String(), currpath)
+	generate.GenerateAppcode(generate.SQLDriver.String(), generate.SQLConn.String(), generate.Level.String(), generate.Tables.String(), currPath)
 }
 
-func migration(cmd *commands.Command, args []string, currpath string) {
+func migration(cmd *commands.Command, args []string, currPath string) {
 	if len(args) < 2 {
 		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
 	}
-	cmd.Flag.Parse(args[2:])
+	_ = cmd.Flag.Parse(args[2:])
 	mname := args[1]
 
 	asanaLogger.Log.Infof("Using '%s' as migration name", mname)
@@ -183,19 +183,19 @@ func migration(cmd *commands.Command, args []string, currpath string) {
 		upsql = dbMigrator.GenerateCreateUp(mname)
 		downsql = dbMigrator.GenerateCreateDown(mname)
 	}
-	generate.GenerateMigration(mname, upsql, downsql, currpath)
+	generate.GenerateMigration(mname, upsql, downsql, currPath)
 }
 
-func controller(args []string, currpath string) {
+func controller(args []string, currPath string) {
 	if len(args) == 2 {
 		cname := args[1]
-		generate.GenerateController(cname, currpath)
+		generate.GenerateController(cname, currPath)
 	} else {
 		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
 	}
 }
 
-func model(cmd *commands.Command, args []string, currpath string) {
+func model(cmd *commands.Command, args []string, currPath string) {
 	if len(args) < 2 {
 		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
 	}
@@ -205,13 +205,13 @@ func model(cmd *commands.Command, args []string, currpath string) {
 		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
 	}
 	sname := args[1]
-	generate.GenerateModel(sname, generate.Fields.String(), currpath)
+	generate.GenerateModel(sname, generate.Fields.String(), currPath)
 }
 
-func view(args []string, currpath string) {
+func view(args []string, currPath string) {
 	if len(args) == 2 {
 		cname := args[1]
-		generate.GenerateView(cname, currpath)
+		generate.GenerateView(cname, currPath)
 	} else {
 		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
 	}

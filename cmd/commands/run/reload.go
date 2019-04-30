@@ -64,7 +64,7 @@ type wsClient struct {
 func (c *wsClient) readPump() {
 	defer func() {
 		c.broker.unregister <- c
-		c.conn.Close()
+		_ = c.conn.Close()
 	}()
 
 	for {

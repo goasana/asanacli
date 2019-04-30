@@ -82,7 +82,7 @@ func RunMigration(cmd *commands.Command, args []string) int {
 
 	// Getting command line arguments
 	if len(args) != 0 {
-		cmd.Flag.Parse(args[1:])
+		_ = cmd.Flag.Parse(args[1:])
 	}
 	if mDriver == "" {
 		mDriver = utils.DocValue(config.Conf.Database.Driver)

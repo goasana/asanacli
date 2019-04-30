@@ -92,7 +92,7 @@ type walkFileTree struct {
 	excludePrefix []string
 	excludeRegexp []*regexp.Regexp
 	excludeSuffix []string
-	allfiles      map[string]bool
+	allFiles      map[string]bool
 	output        *io.Writer
 }
 
@@ -124,13 +124,13 @@ func (wft *walkFileTree) isExcludeName(name string) bool {
 	return false
 }
 
-func (wft *walkFileTree) isEmpty(fpath string) bool {
-	fh, _ := os.Open(fpath)
+func (wft *walkFileTree) isEmpty(fPath string) bool {
+	fh, _ := os.Open(fPath)
 	defer fh.Close()
 	infos, _ := fh.Readdir(-1)
 	for _, fi := range infos {
 		fn := fi.Name()
-		fp := path.Join(fpath, fn)
+		fp := path.Join(fPath, fn)
 		if wft.isExclude(wft.virPath(fp)) {
 			continue
 		}
@@ -148,13 +148,13 @@ func (wft *walkFileTree) isEmpty(fpath string) bool {
 	return true
 }
 
-func (wft *walkFileTree) relName(fpath string) string {
-	name, _ := path.Rel(wft.prefix, fpath)
+func (wft *walkFileTree) relName(fPath string) string {
+	name, _ := path.Rel(wft.prefix, fPath)
 	return name
 }
 
-func (wft *walkFileTree) virPath(fpath string) string {
-	name := fpath[len(wft.prefix):]
+func (wft *walkFileTree) virPath(fPath string) string {
+	name := fPath[len(wft.prefix):]
 	if name == "" {
 		return ""
 	}
@@ -177,12 +177,12 @@ func (wft *walkFileTree) readDir(dirname string) ([]os.FileInfo, error) {
 	return list, nil
 }
 
-func (wft *walkFileTree) walkLeaf(fpath string, fi os.FileInfo, err error) error {
+func (wft *walkFileTree) walkLeaf(fPath string, fi os.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
 
-	if fpath == outputP {
+	if fPath == outputP {
 		return nil
 	}
 
@@ -194,33 +194,33 @@ func (wft *walkFileTree) walkLeaf(fpath string, fi os.FileInfo, err error) error
 		return nil
 	}
 
-	name := wft.virPath(fpath)
+	name := wft.virPath(fPath)
 
-	if wft.allfiles[name] {
+	if wft.allFiles[name] {
 		return nil
 	}
 
-	if added, err := wft.wak.compress(name, fpath, fi); added {
+	if added, err := wft.wak.compress(name, fPath, fi); added {
 		if verbose {
 			_, _ = fmt.Fprintf(*wft.output, "\t%s%scompressed%s\t %s%s\n", "\x1b[32m", "\x1b[1m", "\x1b[21m", name, "\x1b[0m")
 		}
-		wft.allfiles[name] = true
+		wft.allFiles[name] = true
 		return err
 	}
 	return err
 }
 
-func (wft *walkFileTree) iterDirectory(fpath string, fi os.FileInfo) error {
+func (wft *walkFileTree) iterDirectory(fPath string, fi os.FileInfo) error {
 	doFSym := fsym && fi.Mode()&os.ModeSymlink > 0
 	if doFSym {
-		nfi, err := os.Stat(fpath)
+		nfi, err := os.Stat(fPath)
 		if os.IsNotExist(err) {
 			return nil
 		}
 		fi = nfi
 	}
 
-	relPath := wft.virPath(fpath)
+	relPath := wft.virPath(fPath)
 
 	if len(relPath) > 0 {
 		if wft.isExcludeName(fi.Name()) {
@@ -232,7 +232,7 @@ func (wft *walkFileTree) iterDirectory(fpath string, fi os.FileInfo) error {
 		}
 	}
 
-	err := wft.walkLeaf(fpath, fi, nil)
+	err := wft.walkLeaf(fPath, fi, nil)
 	if err != nil {
 		if fi.IsDir() && err == path.SkipDir {
 			return nil
@@ -244,13 +244,13 @@ func (wft *walkFileTree) iterDirectory(fpath string, fi os.FileInfo) error {
 		return nil
 	}
 
-	list, err := wft.readDir(fpath)
+	list, err := wft.readDir(fPath)
 	if err != nil {
-		return wft.walkLeaf(fpath, fi, err)
+		return wft.walkLeaf(fPath, fi, err)
 	}
 
 	for _, fileInfo := range list {
-		err = wft.iterDirectory(path.Join(fpath, fileInfo.Name()), fileInfo)
+		err = wft.iterDirectory(path.Join(fPath, fileInfo.Name()), fileInfo)
 		if err != nil {
 			if !fileInfo.IsDir() || err != path.SkipDir {
 				return err
@@ -274,11 +274,11 @@ type tarWalk struct {
 	tw *tar.Writer
 }
 
-func (wft *tarWalk) compress(name, fpath string, fi os.FileInfo) (bool, error) {
+func (wft *tarWalk) compress(name, fPath string, fi os.FileInfo) (bool, error) {
 	isSym := fi.Mode()&os.ModeSymlink > 0
 	link := ""
 	if isSym {
-		link, _ = os.Readlink(fpath)
+		link, _ = os.Readlink(fPath)
 	}
 
 	hdr, err := tar.FileInfoHeader(fi, link)
@@ -294,7 +294,7 @@ func (wft *tarWalk) compress(name, fpath string, fi os.FileInfo) (bool, error) {
 	}
 
 	if !isSym {
-		fr, err := os.Open(fpath)
+		fr, err := os.Open(fPath)
 		if err != nil {
 			return false, err
 		}
@@ -303,7 +303,7 @@ func (wft *tarWalk) compress(name, fpath string, fi os.FileInfo) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		tw.Flush()
+		_ = tw.Flush()
 	}
 
 	return true, nil
@@ -314,7 +314,7 @@ type zipWalk struct {
 	zw *zip.Writer
 }
 
-func (wft *zipWalk) compress(name, fpath string, fi os.FileInfo) (bool, error) {
+func (wft *zipWalk) compress(name, fPath string, fi os.FileInfo) (bool, error) {
 	isSym := fi.Mode()&os.ModeSymlink > 0
 
 	hdr, err := zip.FileInfoHeader(fi)
@@ -330,7 +330,7 @@ func (wft *zipWalk) compress(name, fpath string, fi os.FileInfo) (bool, error) {
 	}
 
 	if !isSym {
-		fr, err := os.Open(fpath)
+		fr, err := os.Open(fPath)
 		if err != nil {
 			return false, err
 		}
@@ -341,7 +341,7 @@ func (wft *zipWalk) compress(name, fpath string, fi os.FileInfo) (bool, error) {
 		}
 	} else {
 		var link string
-		if link, err = os.Readlink(fpath); err != nil {
+		if link, err = os.Readlink(fPath); err != nil {
 			return false, err
 		}
 		_, err = w.Write([]byte(link))
@@ -374,9 +374,9 @@ func packDirectory(output io.Writer, excludePrefix []string, excludeSuffix []str
 		walk.output = &output
 		zw := zip.NewWriter(w)
 		defer func() {
-			zw.Close()
+			_ = zw.Close()
 		}()
-		walk.allfiles = make(map[string]bool)
+		walk.allFiles = make(map[string]bool)
 		walk.zw = zw
 		walk.wak = walk
 		walk.excludePrefix = excludePrefix
@@ -390,12 +390,12 @@ func packDirectory(output io.Writer, excludePrefix []string, excludeSuffix []str
 		tw := tar.NewWriter(cw)
 
 		defer func() {
-			tw.Flush()
-			cw.Flush()
-			tw.Close()
-			cw.Close()
+			_ = tw.Flush()
+			_ = cw.Flush()
+			_ = tw.Close()
+			_ = cw.Close()
 		}()
-		walk.allfiles = make(map[string]bool)
+		walk.allFiles = make(map[string]bool)
 		walk.tw = tw
 		walk.wak = walk
 		walk.excludePrefix = excludePrefix
@@ -419,7 +419,7 @@ func packApp(cmd *commands.Command, args []string) int {
 	curPath, _ := os.Getwd()
 	var thePath string
 
-	nArgs := []string{}
+	var nArgs []string
 	has := false
 	for _, a := range args {
 		if a != "" && a[0] == '-' {
@@ -429,7 +429,7 @@ func packApp(cmd *commands.Command, args []string) int {
 			nArgs = append(nArgs, a)
 		}
 	}
-	cmd.Flag.Parse(nArgs)
+	_ = cmd.Flag.Parse(nArgs)
 
 	if !path.IsAbs(appPath) {
 		appPath = path.Join(curPath, appPath)
@@ -489,8 +489,8 @@ func packApp(cmd *commands.Command, args []string) int {
 			}
 		}
 
-		os.Setenv("GOOS", goos)
-		os.Setenv("GOARCH", goarch)
+		_ = os.Setenv("GOOS", goos)
+		_ = os.Setenv("GOARCH", goarch)
 
 		asanaLogger.Log.Infof("Using: GOOS=%s GOARCH=%s", goos, goarch)
 
@@ -501,11 +501,11 @@ func packApp(cmd *commands.Command, args []string) int {
 
 		args := []string{"build", "-o", binPath}
 		if len(buildArgs) > 0 {
-			args = append(args, strings.Fields(buildArgs)...)
+			args = append(args, buildArgs)
 		}
 
 		if verbose {
-			fmt.Fprintf(output, "\t%s%s+ go %s%s%s\n", "\x1b[32m", "\x1b[1m", strings.Join(args, " "), "\x1b[21m", "\x1b[0m")
+			_, _ = fmt.Fprintf(output, "\t%s%s+ go %s%s%s\n", "\x1b[32m", "\x1b[1m", strings.Join(args, " "), "\x1b[21m", "\x1b[0m")
 		}
 
 		execmd := exec.Command("go", args...)
