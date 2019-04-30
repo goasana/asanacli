@@ -1,0 +1,279 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "RT7G1na3Buq45tRUN+39hTRQfB8=",
+			"origin": "github.com/go-delve/delve/vendor/github.com/cosiner/argv",
+			"path": "github.com/cosiner/argv",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "YImPVNZRCKOaaReWnFEH+AaP8NM=",
+			"path": "github.com/fsnotify/fsnotify",
+			"revision": "1485a34d5d5723fea214f5710708e19a831720e4",
+			"revisionTime": "2019-03-12T18:14:46Z"
+		},
+		{
+			"checksumSHA1": "fp8iJjvryUGswhpYc32d/0BqCaU=",
+			"path": "github.com/go-delve/delve/pkg/config",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "UxU+rBogEV80d8zKVpdFRO/6q9E=",
+			"path": "github.com/go-delve/delve/pkg/dwarf/frame",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "sENH0C+S3jEa80BTfUhZKLILyCk=",
+			"path": "github.com/go-delve/delve/pkg/dwarf/godwarf",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "ZO1Xiq5WpdnJsKtuTuHbXj89gM8=",
+			"path": "github.com/go-delve/delve/pkg/dwarf/line",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "RpupChLlqEw3mTF4Vd24dGHp1is=",
+			"path": "github.com/go-delve/delve/pkg/dwarf/op",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "rt20EAj6YKLQTq8I04MAJSVBlL0=",
+			"path": "github.com/go-delve/delve/pkg/dwarf/reader",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "7t8NqlzPV23du/GdZtTPRhF8V9s=",
+			"path": "github.com/go-delve/delve/pkg/dwarf/util",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "yQemdkGiGAp9VIN/pcBNd2l2ZWo=",
+			"path": "github.com/go-delve/delve/pkg/goversion",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "eaY/BDlqkwjU9icE+kWclfxPcJM=",
+			"path": "github.com/go-delve/delve/pkg/logflags",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "lthBKbmQfBTclgy74qvBRlKpE/s=",
+			"path": "github.com/go-delve/delve/pkg/proc",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "2MZJHAtoC33D4aY+TGbgXY3zrEI=",
+			"path": "github.com/go-delve/delve/pkg/proc/core",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "3go6qO59K/8qBwWMrh+uejMC/ks=",
+			"path": "github.com/go-delve/delve/pkg/proc/core/minidump",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "HiKHMgML6t6kgu/xIaQkNcbi4jU=",
+			"path": "github.com/go-delve/delve/pkg/proc/gdbserial",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "KE39qmqFbVr62FotevrmiSYpcvc=",
+			"path": "github.com/go-delve/delve/pkg/proc/linutil",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "Jn/vwQ74xa8DW11ppa6II+3Sr9w=",
+			"path": "github.com/go-delve/delve/pkg/proc/native",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "SurwM9wvUtFDTCi0MU0a2QpTQB4=",
+			"path": "github.com/go-delve/delve/pkg/proc/winutil",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "selgT31LR/kxkYi8rEfugt1xByk=",
+			"path": "github.com/go-delve/delve/pkg/terminal",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "A3QVD3uNjiKzN82F0lhk2b5RWrY=",
+			"path": "github.com/go-delve/delve/pkg/version",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "3p1m2GeKvWGmvl/f2/AcQL8qfLM=",
+			"path": "github.com/go-delve/delve/service",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "Ck8PPrW6UWtzceQFSbVRnA5jyN0=",
+			"path": "github.com/go-delve/delve/service/api",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "qqDy1BITh7IPY41icXVkMpQ8Xfo=",
+			"path": "github.com/go-delve/delve/service/debugger",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "FwZylP9YWkeDhcBUrQU3imwggFg=",
+			"path": "github.com/go-delve/delve/service/rpc1",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "jweed9UomrG6/+5eGv5ug+qisho=",
+			"path": "github.com/go-delve/delve/service/rpc2",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "6OhK8Rl/d0qKg959J8za71LPSVw=",
+			"path": "github.com/go-delve/delve/service/rpccommon",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "xWc9p5Kq5cQbDIwbXHdc9v8sdMU=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "d0a548181995c293eb09c61ef80099ba1cdbe8f5",
+			"revisionTime": "2019-04-23T11:20:50Z"
+		},
+		{
+			"checksumSHA1": "hw38pE+iYpSJjBW5V00edYA4Mrg=",
+			"path": "github.com/goasana/framework/encoder",
+			"revision": "a68f1e527d310ffaef3c66a1bc0b361db2e878c6",
+			"revisionTime": "2019-04-30T06:53:36Z"
+		},
+		{
+			"checksumSHA1": "C29z1pYnaqpbvVFswAgLE420msE=",
+			"path": "github.com/goasana/framework/encoder/json",
+			"revision": "a68f1e527d310ffaef3c66a1bc0b361db2e878c6",
+			"revisionTime": "2019-04-30T06:53:36Z"
+		},
+		{
+			"checksumSHA1": "XwhmCi8fExQKwcgRFlQkay0xWKA=",
+			"path": "github.com/goasana/framework/swagger",
+			"revision": "a68f1e527d310ffaef3c66a1bc0b361db2e878c6",
+			"revisionTime": "2019-04-30T06:53:36Z"
+		},
+		{
+			"checksumSHA1": "H+B2awgtW61+C4sqYBHdflDgLR8=",
+			"path": "github.com/goasana/framework/utils",
+			"revision": "a68f1e527d310ffaef3c66a1bc0b361db2e878c6",
+			"revisionTime": "2019-04-30T06:53:36Z"
+		},
+		{
+			"checksumSHA1": "3ORLCzeT6ci2RkN0jo1bY6bmE8A=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "80c2d40e9b91f2ef7a9c1a403aeec64d1b89a9a6",
+			"revisionTime": "2019-04-27T04:03:06Z"
+		},
+		{
+			"checksumSHA1": "pFE860yWOkB+Vi/WqAyJQWyZCcs=",
+			"path": "github.com/lib/pq",
+			"revision": "51e2106eed1cea199c802d2a49e91e2491b02056",
+			"revisionTime": "2019-04-15T17:47:12Z"
+		},
+		{
+			"checksumSHA1": "ATnwV0POluBNQEMjPdylodz0oK0=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "51e2106eed1cea199c802d2a49e91e2491b02056",
+			"revisionTime": "2019-04-15T17:47:12Z"
+		},
+		{
+			"checksumSHA1": "ywel3wHXnu1eLhyT1/FolporeAc=",
+			"path": "github.com/lib/pq/scram",
+			"revision": "51e2106eed1cea199c802d2a49e91e2491b02056",
+			"revisionTime": "2019-04-15T17:47:12Z"
+		},
+		{
+			"checksumSHA1": "uAVg4Tj5Fxi62z7/ScDEkHr6Ue8=",
+			"origin": "github.com/go-delve/delve/vendor/github.com/mattn/go-colorable",
+			"path": "github.com/mattn/go-colorable",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "y/A5iuvwjytQE2CqVuphQRXR2nI=",
+			"origin": "github.com/go-delve/delve/vendor/github.com/mattn/go-isatty",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "BcKVRsLhMzSj4ksVqslEThK6tjA=",
+			"origin": "github.com/go-delve/delve/vendor/github.com/peterh/liner",
+			"path": "github.com/peterh/liner",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "PNnR2QlZlBudLfws/cQRbzhuMRg=",
+			"origin": "github.com/go-delve/delve/vendor/github.com/sirupsen/logrus",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "Tfz3fwv4nEPRjPefO3GY/UY4TFs=",
+			"origin": "github.com/go-delve/delve/vendor/golang.org/x/arch/x86/x86asm",
+			"path": "golang.org/x/arch/x86/x86asm",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "BGm8lKZmvJbf/YOJLeL1rw2WVjA=",
+			"origin": "github.com/go-delve/delve/vendor/golang.org/x/crypto/ssh/terminal",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "m/RKia2Jy09JoBqzMrk1MJLzqYk=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "a129542de9ae0895210abff9c95d67a1f33cb93d",
+			"revisionTime": "2019-04-26T13:04:56Z"
+		},
+		{
+			"checksumSHA1": "cFNQekaQ8KckfywxwWwZauiz9BY=",
+			"origin": "github.com/go-delve/delve/vendor/golang.org/x/sys/windows",
+			"path": "golang.org/x/sys/windows",
+			"revision": "79e0f543c095f5367a54450033af8ba6c5f8014e",
+			"revisionTime": "2019-04-26T17:24:21Z"
+		},
+		{
+			"checksumSHA1": "QqDq2x8XOU7IoOR98Cx1eiV5QY8=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "51d6538a90f86fe93ac480b35f37b2be17fef232",
+			"revisionTime": "2018-11-15T11:05:04Z"
+		}
+	],
+	"rootPath": "github.com/goasana/asana"
+}
