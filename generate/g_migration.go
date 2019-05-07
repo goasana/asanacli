@@ -21,9 +21,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
+	"github.com/goasana/asanacli/utils"
 )
 
 const (
@@ -238,7 +238,7 @@ func GenerateMigration(mname, upsql, downsql, curpath string) {
 const (
 	MigrationHeader = `package main
 						import (
-							"github.com/goasana/framework/migration"
+							"github.com/goasana/asana/migration"
 						)
 
 						// DO NOT MODIFY

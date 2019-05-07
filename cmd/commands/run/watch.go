@@ -24,10 +24,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/goasana/asana/config"
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/config"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
+	"github.com/goasana/asanacli/utils"
 	"github.com/fsnotify/fsnotify"
 )
 

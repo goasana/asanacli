@@ -18,7 +18,7 @@ import (
 	"net/http"
 	"time"
 
-	asanaLogger "github.com/goasana/asana/logger"
+	asanaLogger "github.com/goasana/asanacli/logger"
 	"github.com/gorilla/websocket"
 )
 

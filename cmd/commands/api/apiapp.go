@@ -20,11 +20,11 @@ import (
 	path "path/filepath"
 	"strings"
 
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/cmd/commands/version"
-	"github.com/goasana/asana/generate"
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/cmd/commands/version"
+	"github.com/goasana/asanacli/generate"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/utils"
 )
 
 var CmdApiapp = &commands.Command{
@@ -504,7 +504,7 @@ import (
 	"path/filepath"
 	_ "{{.Appname}}/routers"
 
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

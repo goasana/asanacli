@@ -24,6 +24,6 @@ clean:
 publish:
 	mkdir -p bin/$(VERSION)
 	cd bin/$(VERSION)
-	xgo -v -x --targets="windows/*,darwin/*,linux/386,linux/amd64,linux/arm-5,linux/arm64" -out asana_$(VERSION) github.com/goasana/asana
+	xgo -v -x --targets="windows/*,darwin/*,linux/386,linux/amd64,linux/arm-5,linux/arm64" -out asana_$(VERSION) github.com/goasana/asanacli
 	cd ..
 	ghr -u asana -r asana $(VERSION) $(VERSION)

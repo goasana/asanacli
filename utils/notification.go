@@ -21,7 +21,7 @@ import (
 
 	"runtime"
 
-	"github.com/goasana/asana/config"
+	"github.com/goasana/asanacli/config"
 )
 
 const appName = "Asana"

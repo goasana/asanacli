@@ -10,10 +10,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/cmd/commands/version"
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/cmd/commands/version"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
 )
 
 var CmdFix = &commands.Command{

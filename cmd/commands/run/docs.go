@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	asanaLogger "github.com/goasana/asana/logger"
+	asanaLogger "github.com/goasana/asanacli/logger"
 )
 
 var (

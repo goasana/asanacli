@@ -23,9 +23,9 @@ import (
 	"regexp"
 	"strings"
 
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
-	"github.com/goasana/asana/utils"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
+	"github.com/goasana/asanacli/utils"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )
@@ -992,7 +992,7 @@ import (
 	"reflect"
 	"strings"
 	{{timePkg}}
-	"github.com/goasana/framework/orm"
+	"github.com/goasana/asana/orm"
 )
 
 {{modelStruct}}
@@ -1141,7 +1141,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 )
 
 // {{ctrlName}}Controller operations for {{ctrlName}}
@@ -1316,7 +1316,7 @@ package routers
 import (
 	"{{pkgPath}}/controllers"
 
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 )
 
 func init() {

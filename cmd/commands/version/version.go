@@ -14,10 +14,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/goasana/asana/cmd/commands"
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
+	"github.com/goasana/asanacli/utils"
 	"gopkg.in/yaml.v2"
 )
 
@@ -159,7 +159,7 @@ func GetAsanaVersion() string {
 		}
 
 	}
-	return "Asana is not installed. Please do consider installing it first: https://github.com/goasana/framework"
+	return "Asana is not installed. Please do consider installing it first: https://github.com/goasana/asana"
 }
 
 func GetGoVersion() string {

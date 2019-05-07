@@ -17,13 +17,13 @@ package apiapp
 import (
 	"net/http"
 
-	asanaLogger "github.com/goasana/asana/logger"
+	asanaLogger "github.com/goasana/asanacli/logger"
 
 	"os"
 
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/cmd/commands/version"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/cmd/commands/version"
+	"github.com/goasana/asanacli/utils"
 )
 
 var CmdServer = &commands.Command{

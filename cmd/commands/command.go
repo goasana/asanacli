@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/goasana/asana/logger/colors"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/logger/colors"
+	"github.com/goasana/asanacli/utils"
 )
 
 // Command is the unit of execution

@@ -18,11 +18,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/goasana/asana/cmd"
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/config"
-	"github.com/goasana/asana/generate/swaggergen"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/config"
+	"github.com/goasana/asanacli/generate/swaggergen"
+	"github.com/goasana/asanacli/utils"
 )
 
 var (

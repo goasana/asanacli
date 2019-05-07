@@ -14,7 +14,7 @@
 
 package generate
 
-import "github.com/goasana/asana/utils"
+import "github.com/goasana/asanacli/utils"
 
 var SQLDriver utils.DocValue
 var SQLConn utils.DocValue

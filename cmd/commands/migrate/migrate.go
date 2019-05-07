@@ -23,12 +23,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/cmd/commands/version"
-	"github.com/goasana/asana/config"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/cmd/commands/version"
+	"github.com/goasana/asanacli/config"
+	"github.com/goasana/asanacli/utils"
 
-	asanaLogger "github.com/goasana/asana/logger"
+	asanaLogger "github.com/goasana/asanacli/logger"
 )
 
 var CmdMigrate = &commands.Command{
@@ -375,8 +375,8 @@ const (
 import(
 	"os"
 
-	"github.com/goasana/framework/orm"
-	"github.com/goasana/framework/migration"
+	"github.com/goasana/asana/orm"
+	"github.com/goasana/asana/migration"
 
 	_ "{{DriverRepo}}"
 )

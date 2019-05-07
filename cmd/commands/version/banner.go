@@ -8,7 +8,7 @@ import (
 	"text/template"
 	"time"
 
-	asanaLogger "github.com/goasana/asana/logger"
+	asanaLogger "github.com/goasana/asanacli/logger"
 )
 
 // RuntimeInfo holds information about the current runtime.

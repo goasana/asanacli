@@ -19,7 +19,7 @@ import (
 	"os"
 	"path/filepath"
 
-	asanaLogger "github.com/goasana/asana/logger"
+	asanaLogger "github.com/goasana/asanacli/logger"
 	"gopkg.in/yaml.v2"
 )
 

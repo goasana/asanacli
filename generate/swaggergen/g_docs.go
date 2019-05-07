@@ -34,10 +34,10 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/goasana/framework/swagger"
-	"github.com/goasana/framework/utils"
-	asanaLogger "github.com/goasana/asana/logger"
-	bu "github.com/goasana/asana/utils"
+	"github.com/goasana/asana/swagger"
+	"github.com/goasana/asana/utils"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	bu "github.com/goasana/asanacli/utils"
 )
 
 const (
@@ -423,7 +423,7 @@ func analyseControllerPkg(vendorPath, localName, pkgpath string) {
 	if isSystemPackage(pkgpath) {
 		return
 	}
-	if pkgpath == "github.com/goasana/framework" {
+	if pkgpath == "github.com/goasana/asana" {
 		return
 	}
 	if localName != "" {

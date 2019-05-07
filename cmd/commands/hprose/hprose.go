@@ -7,12 +7,12 @@ import (
 	"path"
 	"strings"
 
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/cmd/commands/api"
-	"github.com/goasana/asana/cmd/commands/version"
-	"github.com/goasana/asana/generate"
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/cmd/commands/api"
+	"github.com/goasana/asanacli/cmd/commands/version"
+	"github.com/goasana/asanacli/generate"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/utils"
 )
 
 var CmdHproseapp = &commands.Command{

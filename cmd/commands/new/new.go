@@ -20,11 +20,11 @@ import (
 	path "path/filepath"
 	"strings"
 
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/cmd/commands/version"
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/cmd/commands/version"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
+	"github.com/goasana/asanacli/utils"
 )
 
 var CmdNew = &commands.Command{
@@ -67,7 +67,7 @@ var maingo = `package main
 import (
 	_ "{{.Appname}}/routers"
 
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 )
 
 func main() {
@@ -80,7 +80,7 @@ var router = `package routers
 import (
 	"{{.Appname}}/controllers"
 
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 )
 
 func init() {
@@ -98,7 +98,7 @@ import (
 	"path/filepath"
 	_ "{{.Appname}}/routers"
 
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -132,7 +132,7 @@ func TestAsana(t *testing.T) {
 var controllers = `package controllers
 
 import (
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 )
 
 type MainController struct {

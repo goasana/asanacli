@@ -1,1 +1,1 @@
-github.com/goasana/asana/generate/swaggergen/*.go:SA1024
+github.com/goasana/asanacli/generate/swaggergen/*.go:SA1024

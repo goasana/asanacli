@@ -29,8 +29,8 @@ import (
 	"time"
 	"unicode"
 
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
 )
 
 // Go is a basic promise implementation: it wraps calls a function in a goroutine
@@ -71,7 +71,7 @@ func IsInGOPATH(thePath string) bool {
 // IsAsanaProject checks whether the current path is a Asana application or not
 func IsAsanaProject(thePath string) bool {
 	mainFiles := []string{}
-	hasAsanaRegex := regexp.MustCompile(`(?s)package main.*?import.*?\(.*?github.com/goasana/framework".*?\).*func main()`)
+	hasAsanaRegex := regexp.MustCompile(`(?s)package main.*?import.*?\(.*?github.com/goasana/asana".*?\).*func main()`)
 	c := make(chan error)
 	// Walk the application path tree to look for main files.
 	// Main files must satisfy the 'hasAsanaRegex' regular expression.

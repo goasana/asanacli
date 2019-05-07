@@ -22,10 +22,10 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/cmd/commands/version"
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/cmd/commands/version"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/utils"
 )
 
 const dockerBuildTemplate = `FROM {{.BaseImage}}

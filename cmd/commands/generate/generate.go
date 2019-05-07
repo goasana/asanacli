@@ -17,13 +17,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/cmd/commands/version"
-	"github.com/goasana/asana/config"
-	"github.com/goasana/asana/generate"
-	"github.com/goasana/asana/generate/swaggergen"
-	"github.com/goasana/asana/logger"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/cmd/commands/version"
+	"github.com/goasana/asanacli/config"
+	"github.com/goasana/asanacli/generate"
+	"github.com/goasana/asanacli/generate/swaggergen"
+	"github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/utils"
 )
 
 var CmdGenerate = &commands.Command{

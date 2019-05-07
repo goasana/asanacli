@@ -3,9 +3,9 @@ package generate
 import (
 	"strings"
 
-	"github.com/goasana/asana/cmd/commands/migrate"
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands/migrate"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/utils"
 )
 
 func GenerateScaffold(sname, fields, currpath, driver, conn string) {

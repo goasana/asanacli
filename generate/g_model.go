@@ -21,9 +21,9 @@ import (
 	"path"
 	"strings"
 
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
-	"github.com/goasana/asana/utils"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
+	"github.com/goasana/asanacli/utils"
 )
 
 func GenerateModel(mname, fields, currpath string) {
@@ -145,7 +145,7 @@ import (
 	"reflect"
 	"strings"
 	{{timePkg}}
-	"github.com/goasana/framework/orm"
+	"github.com/goasana/asana/orm"
 )
 
 {{modelStruct}}

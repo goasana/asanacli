@@ -24,7 +24,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/goasana/asana/logger/colors"
+	"github.com/goasana/asanacli/logger/colors"
 )
 
 var errInvalidLogLevel = errors.New("logger: invalid log level")

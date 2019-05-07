@@ -29,10 +29,10 @@ import (
 	"github.com/go-delve/delve/service"
 	"github.com/go-delve/delve/service/rpc2"
 	"github.com/go-delve/delve/service/rpccommon"
-	"github.com/goasana/asana/cmd/commands"
-	"github.com/goasana/asana/cmd/commands/version"
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	"github.com/goasana/asanacli/cmd/commands/version"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/utils"
 )
 
 var cmdDlv = &commands.Command{

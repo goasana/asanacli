@@ -25,9 +25,9 @@ import (
 	"path"
 	"strings"
 
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
-	"github.com/goasana/asana/utils"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
+	"github.com/goasana/asanacli/utils"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )
@@ -47,7 +47,7 @@ import (
 
 	"{{.Appname}}/models"
 
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 	"github.com/hprose/hprose-golang/rpc"
 )
 
@@ -91,8 +91,8 @@ import (
 	"{{.Appname}}/models"
 	"github.com/hprose/hprose-golang/rpc"
 
-	"github.com/goasana/framework"
-	"github.com/goasana/framework/orm"
+	"github.com/goasana/asana"
+	"github.com/goasana/asana/orm"
 	{{.DriverPkg}}
 )
 
@@ -420,7 +420,7 @@ import (
 	"reflect"
 	"strings"
 	{{timePkg}}
-	"github.com/goasana/framework/orm"
+	"github.com/goasana/asana/orm"
 )
 
 {{modelStruct}}

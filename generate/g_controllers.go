@@ -20,9 +20,9 @@ import (
 	"path"
 	"strings"
 
-	asanaLogger "github.com/goasana/asana/logger"
-	"github.com/goasana/asana/logger/colors"
-	"github.com/goasana/asana/utils"
+	asanaLogger "github.com/goasana/asanacli/logger"
+	"github.com/goasana/asanacli/logger/colors"
+	"github.com/goasana/asanacli/utils"
 )
 
 func GenerateController(cname, currpath string) {
@@ -78,7 +78,7 @@ func GenerateController(cname, currpath string) {
 var controllerTpl = `package {{packageName}}
 
 import (
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 )
 
 // {{controllerName}}Controller operations for {{controllerName}}
@@ -166,7 +166,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/goasana/framework"
+	"github.com/goasana/asana"
 )
 
 //  {{controllerName}}Controller operations for {{controllerName}}

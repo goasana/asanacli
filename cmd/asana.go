@@ -16,22 +16,22 @@
 package cmd
 
 import (
-	"github.com/goasana/asana/cmd/commands"
-	_ "github.com/goasana/asana/cmd/commands/api"
-	_ "github.com/goasana/asana/cmd/commands/asanafix"
-	_ "github.com/goasana/asana/cmd/commands/bale"
-	_ "github.com/goasana/asana/cmd/commands/dlv"
-	_ "github.com/goasana/asana/cmd/commands/dockerize"
-	_ "github.com/goasana/asana/cmd/commands/generate"
-	_ "github.com/goasana/asana/cmd/commands/hprose"
-	_ "github.com/goasana/asana/cmd/commands/migrate"
-	_ "github.com/goasana/asana/cmd/commands/new"
-	_ "github.com/goasana/asana/cmd/commands/pack"
-	_ "github.com/goasana/asana/cmd/commands/rs"
-	_ "github.com/goasana/asana/cmd/commands/run"
-	_ "github.com/goasana/asana/cmd/commands/server"
-	_ "github.com/goasana/asana/cmd/commands/version"
-	"github.com/goasana/asana/utils"
+	"github.com/goasana/asanacli/cmd/commands"
+	_ "github.com/goasana/asanacli/cmd/commands/api"
+	_ "github.com/goasana/asanacli/cmd/commands/asanafix"
+	_ "github.com/goasana/asanacli/cmd/commands/bale"
+	_ "github.com/goasana/asanacli/cmd/commands/dlv"
+	_ "github.com/goasana/asanacli/cmd/commands/dockerize"
+	_ "github.com/goasana/asanacli/cmd/commands/generate"
+	_ "github.com/goasana/asanacli/cmd/commands/hprose"
+	_ "github.com/goasana/asanacli/cmd/commands/migrate"
+	_ "github.com/goasana/asanacli/cmd/commands/new"
+	_ "github.com/goasana/asanacli/cmd/commands/pack"
+	_ "github.com/goasana/asanacli/cmd/commands/rs"
+	_ "github.com/goasana/asanacli/cmd/commands/run"
+	_ "github.com/goasana/asanacli/cmd/commands/server"
+	_ "github.com/goasana/asanacli/cmd/commands/version"
+	"github.com/goasana/asanacli/utils"
 )
 
 func IfGenerateDocs(name string, args []string) bool {
