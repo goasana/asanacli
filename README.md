@@ -1,11 +1,11 @@
 
-Asana
+AsanaCLI
 ===
 
 asana is a command-line tool facilitating development of Asana-based application.
 
-[![Build Status](https://img.shields.io/travis/asana/asana.svg?branch=master&label=master)](https://travis-ci.org/goasana/asana)
-[![Build Status](https://img.shields.io/travis/asana/asana.svg?branch=develop&label=develop)](https://travis-ci.org/goasana/asana)
+[![Build Status](https://img.shields.io/travis/asana/asanacli.svg?branch=master&label=master)](https://travis-ci.org/goasana/asanacli)
+[![Build Status](https://img.shields.io/travis/asana/asanacli.svg?branch=develop&label=develop)](https://travis-ci.org/goasana/asanacli)
 
 ## Requirements
 
@@ -13,13 +13,13 @@ asana is a command-line tool facilitating development of Asana-based application
 
 ## Installation
 
-To install `asana` use the `go get` command:
+To install `asanacli` use the `go get` command:
 
 ```bash
 go get github.com/goasana/asanacli
 ```
 
-Then you can add `asana` binary to PATH environment variable in your `~/.bashrc` or `~/.bash_profile` file:
+Then you can add `asanacli` binary to PATH environment variable in your `~/.bashrc` or `~/.bash_profile` file:
 
 ```bash
 export PATH=$PATH:<your_main_gopath>/bin
@@ -33,7 +33,7 @@ go get -u github.com/goasana/asanacli
 
 ## Basic commands
 
-asana provides a variety of commands which can be helpful at various stages of development. The top level commands include:
+asanacli provides a variety of commands which can be helpful at various stages of development. The top level commands include:
 
 ```
     version     Prints the current Asana version
@@ -54,10 +54,10 @@ asana provides a variety of commands which can be helpful at various stages of d
 
 ### asana version
 
-To display the current version of `asana`, `sana` and `go` installed on your machine:
+To display the current version of `asana`, `asanacli` and `go` installed on your machine:
 
 ```bash
-$ asana version
+$ asanacli version
     ___   _____ ___    _   _____ 
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
@@ -78,7 +78,7 @@ $ asana version
 You can also change the output format using `-o` flag:
 
 ```bash
-$ asana version -o json
+$ asanacli version -o json
 {
     "GoVersion": "go1.7.4",
     "GOOS": "linux",
@@ -87,19 +87,19 @@ $ asana version -o json
     "GOPATH": "/home/asanauser/.go",
     "GOROOT": "/usr/lib/go",
     "Compiler": "gc",
-    "AsanaVersion": "1.0",
-    "AsanaFrameworkVersion": "1.0"
+    "AsanaCLIVersion": "1.0",
+    "AsanaVersion": "1.0"
 }
 ```
 
-For more information on the usage, run `asana help version`.
+For more information on the usage, run `asanacli help version`.
 
-### asana new
+### asanacli new
 
 To create a new Asana web application:
 
 ```bash
-$ asana new my-web-app
+$ asanacli new my-web-app
     ___   _____ ___    _   _____ 
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
@@ -126,9 +126,9 @@ $ asana new my-web-app
 2016/12/26 22:28:11 SUCCESS  ▶ 0002 New application successfully created!
 ```
 
-For more information on the usage, run `asana help new`.
+For more information on the usage, run `asanacli help new`.
 
-### asana run
+### asanacli run
 
 To run the application we just created, you can navigate to the application folder and execute:
 
@@ -139,17 +139,17 @@ $ cd my-web-app && asana run
 Or from anywhere in your machine:
 
 ```
-$ asana run github.com/user/my-web-app
+$ asanacli run github.com/user/my-web-app
 ```
 
-For more information on the usage, run `asana help run`.
+For more information on the usage, run `asanacli help run`.
 
-### asana pack
+### asanacli pack
 
 To compress a Asana application into a single deployable file:
 
 ```bash
-$ asana pack
+$ asanacli pack
     ___   _____ ___    _   _____ 
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
@@ -167,24 +167,24 @@ $ asana pack
 
 For more information on the usage, run `asana help pack`.
 
-### asana rs 
+### asanacli rs 
 Inspired by makefile / npm scripts.
-  Run script allows you to run arbitrary commands using asana.
+  Run script allows you to run arbitrary commands using asanacli.
   Custom commands are provided from the "scripts" object inside asana.json or Asanafile.
 
-  To run a custom command, use: $ asana rs mycmd ARGS
+  To run a custom command, use: $ asanacli rs mycmd ARGS
 
 ```bash
-$ asana help rs
+$ asanacli help rs
 
 USAGE
-  asana rs
+  asanacli rs
 
 DESCRIPTION
-  Run script allows you to run arbitrary commands using asana.
+  Run script allows you to run arbitrary commands using asanacli.
   Custom commands are provided from the "scripts" object inside asana.json or Asanafile.
 
-  To run a custom command, use: $ asana rs mycmd ARGS
+  To run a custom command, use: $ asanacli rs mycmd ARGS
   
 AVAILABLE SCRIPTS
   gtest
@@ -195,16 +195,16 @@ AVAILABLE SCRIPTS
 ```
 
 *Run your scripts with:*
-```$ asana rs gtest tests/*.go```
-```$ asana rs gtestall```
+```$ asanacli rs gtest tests/*.go```
+```$ asanacli rs gtestall```
 
 
-### asana api
+### asanacli api
 
 To create a Asana API application:
 
 ```bash
-$ asana api my-api
+$ asanacli api my-api
     ___   _____ ___    _   _____ 
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
@@ -230,12 +230,12 @@ $ asana api my-api
 
 For more information on the usage, run `asana help api`.
 
-### asana hprose
+### asanacli hprose
 
 To create an Hprose RPC application based on Asana:
 
 ```bash
-$ asana hprose my-rpc-app
+$ asanacli hprose my-rpc-app
     ___   _____ ___    _   _____ 
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
@@ -264,12 +264,12 @@ $ asana hprose my-rpc-app
 
 For more information on the usage, run `asana help hprose`.
 
-### asana bale
+### asanacli bale
 
 To pack all the static files into Go source files:
 
 ```bash
-$ asana bale
+$ asanacli bale
     ___   _____ ___    _   _____ 
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
@@ -281,20 +281,20 @@ $ asana bale
 
 For more information on the usage, run `asana help bale`.
 
-### asana migrate
+### asanacli migrate
 
 For database migrations, use `asana migrate`.
 
 For more information on the usage, run `asana help migrate`.
 
-### asana generate
+### asanacli generate
 
-asana also comes with a source code generator which speeds up the development.
+asanacli also comes with a source code generator which speeds up the development.
 
 For example, to generate a new controller named `hello`:
 
 ```bash
-$ asana generate controller hello
+$ asanacli generate controller hello
     ___   _____ ___    _   _____ 
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
@@ -308,14 +308,14 @@ $ asana generate controller hello
 
 For more information on the usage, run `asana help generate`.
 
-### asana dockerize
+### asanacli dockerize
 
-asana also helps you dockerize your Asana application by generating a Dockerfile.
+asanacli also helps you dockerize your Asana application by generating a Dockerfile.
 
 For example, to generate a Dockerfile with `Go version 1.6.4` and exposing port `9000`:
 
 ```bash
-$ asana dockerize -image="library/golang:1.6.4" -expose=9000
+$ asanacli dockerize -image="library/golang:1.6.4" -expose=9000
     ___   _____ ___    _   _____ 
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
@@ -327,9 +327,9 @@ $ asana dockerize -image="library/golang:1.6.4" -expose=9000
 
 For more information on the usage, run `asana help dockerize`.
 
-### asana dlv
+### asanacli dlv
 
-asana can also help with debugging your application. To start a debugging session:
+asanacli can also help with debugging your application. To start a debugging session:
 
 ```bash
     ___   _____ ___    _   _____ 
@@ -355,7 +355,7 @@ Breakpoint 1 set at 0x40100f for main.main() ./main.go:8
     11:
 ```
 
-For more information on the usage, run `asana help dlv`.
+For more information on the usage, run `asanacli help dlv`.
 
 ## Shortcuts
 
@@ -363,11 +363,11 @@ Because you'll likely type these generator commands over and over, it makes sens
 
 ```bash
 # Generator Stuff
-alias g:a="asana generate appcode"
-alias g:m="asana generate model"
-alias g:c="asana generate controller"
-alias g:v="asana generate view"
-alias g:mi="asana generate migration"
+alias g:a="asanacli generate appcode"
+alias g:m="asanacli generate model"
+alias g:c="asanacli generate controller"
+alias g:v="asanacli generate view"
+alias g:mi="asanacli generate migration"
 ```
 
 These can be stored , for example, in your `~/.bash_profile` or `~/.bashrc` files.
@@ -379,9 +379,9 @@ To print more information on the usage of a particular command, use `asana help 
 For instance, to get more information about the `run` command:
 
 ```bash
-$ asana help run
+$ asanacli help run
 USAGE
-  asana run [appname] [watchall] [-main=*.go] [-downdoc=true]  [-gendoc=true] [-vendor=true] [-e=folderToExclude]  [-tags=goBuildTags] [-runmode=ASANA_RUNMODE]
+  asanacli run [appname] [watchall] [-main=*.go] [-downdoc=true]  [-gendoc=true] [-vendor=true] [-e=folderToExclude]  [-tags=goBuildTags] [-runmode=ASANA_RUNMODE]
 
 OPTIONS
   -downdoc

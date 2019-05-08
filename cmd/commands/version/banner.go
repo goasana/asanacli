@@ -13,15 +13,15 @@ import (
 
 // RuntimeInfo holds information about the current runtime.
 type RuntimeInfo struct {
-	GoVersion             string
-	GOOS                  string
-	GOARCH                string
-	NumCPU                int
-	GOPATH                string
-	GOROOT                string
-	Compiler              string
-	AsanaVersion          string
-	AsanaFrameworkVersion string
+	GoVersion       string
+	GOOS            string
+	GOARCH          string
+	NumCPU          int
+	GOPATH          string
+	GOROOT          string
+	Compiler        string
+	AsanaCLIVersion string
+	AsanaVersion    string
 }
 
 // InitBanner loads the banner and prints it to output

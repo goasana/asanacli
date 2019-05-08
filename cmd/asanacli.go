@@ -49,23 +49,23 @@ func IfGenerateDocs(name string, args []string) bool {
 var usageTemplate = `Asana is a Fast and Flexible tool for managing your Asana Web Application.
 
 {{"USAGE" | headline}}
-    {{"asana command [arguments]" | bold}}
+    {{"asanacli command [arguments]" | bold}}
 
 {{"AVAILABLE COMMANDS" | headline}}
 {{range .}}{{if .Runnable}}
     {{.Name | printf "%-11s" | bold}} {{.Short}}{{end}}{{end}}
 
-Use {{"asana help [command]" | bold}} for more information about a command.
+Use {{"asanacli help [command]" | bold}} for more information about a command.
 
 {{"ADDITIONAL HELP TOPICS" | headline}}
 {{range .}}{{if not .Runnable}}
     {{.Name | printf "%-11s"}} {{.Short}}{{end}}{{end}}
 
-Use {{"asana help [topic]" | bold}} for more information about that topic.
+Use {{"asanacli help [topic]" | bold}} for more information about that topic.
 `
 
 var helpTemplate = `{{"USAGE" | headline}}
-  {{.UsageLine | printf "asana %s" | bold}}
+  {{.UsageLine | printf "asanacli %s" | bold}}
 {{if .Options}}{{endline}}{{"OPTIONS" | headline}}{{range $k,$v := .Options}}
   {{$k | printf "-%s" | bold}}
       {{$v}}
@@ -74,8 +74,8 @@ var helpTemplate = `{{"USAGE" | headline}}
   {{tmpltostr .Long . | trim}}
 `
 
-var ErrorTemplate = `asana: %s.
-Use {{"asana help" | bold}} for more information.
+var ErrorTemplate = `asanacli: %s.
+Use {{"asanacli help" | bold}} for more information.
 `
 
 func Usage() {

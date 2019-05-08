@@ -65,7 +65,7 @@ var CmdDockerize = &commands.Command{
   The Dockerfile will compile, get the dependencies with {{"godep"|bold}}, and set the entrypoint.
 
   {{"Example:"|bold}}
-    $ asana dockerize -expose="3000,80,25"
+    $ asanacli dockerize -expose="3000,80,25"
   `,
 	PreRun: func(cmd *commands.Command, args []string) { version.ShowShortVersionBanner() },
 	Run:    dockerizeApp,

@@ -35,7 +35,7 @@ var CmdApiapp = &commands.Command{
   The command 'api' creates a Asana API application.
 
   {{"Example:"|bold}}
-      $ asana api [appname] [-tables=""] [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"]
+      $ asanacli api [appname] [-tables=""] [-driver=mysql] [-conn="root:@tcp(127.0.0.1:3306)/test"]
 
   If 'conn' argument is empty, the command will generate an example API application. Otherwise the command
   will connect to your database and generate models based on the existing tables.
@@ -72,7 +72,7 @@ var apiMaingo = `package main
 import (
 	_ "{{.Appname}}/routers"
 
-	"github.com/astaxie/asana"
+	"github.com/goasana/asana"
 )
 
 func main() {
@@ -89,8 +89,8 @@ var apiMainconngo = `package main
 import (
 	_ "{{.Appname}}/routers"
 
-	"github.com/astaxie/asana"
-	"github.com/astaxie/asana/orm"
+	"github.com/goasana/asana"
+	"github.com/goasana/asana/orm"
 	{{.DriverPkg}}
 )
 
@@ -108,7 +108,7 @@ func main() {
 var apirouter = `// @APIVersion 1.0.0
 // @Title asana Test API
 // @Description asana has a very cool tools to autogenerate documents for your API
-// @Contact astaxie@gmail.com
+// @Contact goasana@gmail.com
 // @TermsOfServiceUrl http://asana.me/
 // @License Apache 2.0
 // @LicenseUrl http://www.apache.org/licenses/LICENSE-2.0.html
@@ -117,7 +117,7 @@ package routers
 import (
 	"{{.Appname}}/controllers"
 
-	"github.com/astaxie/asana"
+	"github.com/goasana/asana"
 )
 
 func init() {
@@ -157,12 +157,12 @@ type Object struct {
 
 func init() {
 	Objects = make(map[string]*Object)
-	Objects["hjkhsbnmn123"] = &Object{"hjkhsbnmn123", 100, "astaxie"}
+	Objects["hjkhsbnmn123"] = &Object{"hjkhsbnmn123", 100, "goasana"}
 	Objects["mjjkxsxsaa23"] = &Object{"mjjkxsxsaa23", 101, "someone"}
 }
 
 func AddOne(object Object) (ObjectId string) {
-	object.ObjectId = "astaxie" + strconv.FormatInt(time.Now().UnixNano(), 10)
+	object.ObjectId = "goasana" + strconv.FormatInt(time.Now().UnixNano(), 10)
 	Objects[object.ObjectId] = &object
 	return object.ObjectId
 }
@@ -206,7 +206,7 @@ var (
 
 func init() {
 	UserList = make(map[string]*User)
-	u := User{"user_11111", "astaxie", "11111", Profile{"male", 20, "Singapore", "astaxie@gmail.com"}}
+	u := User{"user_11111", "goasana", "11111", Profile{"male", 20, "Singapore", "goasana@gmail.com"}}
 	UserList["user_11111"] = &u
 }
 
@@ -286,7 +286,7 @@ import (
 	"{{.Appname}}/models"
 	"encoding/json"
 
-	"github.com/astaxie/asana"
+	"github.com/goasana/asana"
 )
 
 // Operations about object
@@ -379,7 +379,7 @@ import (
 	"{{.Appname}}/models"
 	"encoding/json"
 
-	"github.com/astaxie/asana"
+	"github.com/goasana/asana"
 )
 
 // Operations about Users

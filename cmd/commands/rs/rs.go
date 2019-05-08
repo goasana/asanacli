@@ -38,7 +38,7 @@ var cmdRs = &commands.Command{
 	Long: `Run script allows you to run arbitrary commands using Asana.
   Custom commands are provided from the "scripts" object inside asana.json or Asanafile.
 
-  To run a custom command, use: {{"$ asana rs mycmd ARGS" | bold}}
+  To run a custom command, use: {{"$ asanacli rs mycmd ARGS" | bold}}
   {{if len .}}
 {{"AVAILABLE SCRIPTS"|headline}}{{range $cmdName, $cmd := .}}
   {{$cmdName | bold}}

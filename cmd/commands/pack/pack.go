@@ -32,7 +32,7 @@ var CmdPack = &commands.Command{
   This eases the deployment by directly extracting the file to a server.
 
   {{"Example:"|bold}}
-    $ asana pack -v -ba="-ldflags '-s -w'"
+    $ asanacli pack -v -ba="-ldflags '-s -w'"
 `,
 	PreRun: func(cmd *commands.Command, args []string) { version.ShowShortVersionBanner() },
 	Run:    packApp,

@@ -107,7 +107,7 @@ func ParsePackagesFromDir(dirpath string) {
 	c := make(chan error)
 
 	go func() {
-		filepath.Walk(dirpath, func(fpath string, fileInfo os.FileInfo, err error) error {
+		_ = filepath.Walk(dirpath, func(fpath string, fileInfo os.FileInfo, err error) error {
 			if err != nil {
 				return nil
 			}
@@ -320,7 +320,7 @@ func GenerateDocs(curpath string) {
 			}
 		}
 	}
-	os.Mkdir(path.Join(curpath, "swagger"), 0755)
+	_ = os.Mkdir(path.Join(curpath, "swagger"), 0755)
 	fd, err := os.Create(path.Join(curpath, "swagger", "swagger.json"))
 	if err != nil {
 		panic(err)
@@ -476,7 +476,7 @@ func analyseControllerPkg(vendorPath, localName, pkgpath string) {
 					if specDecl.Recv != nil && len(specDecl.Recv.List) > 0 {
 						if t, ok := specDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
 							// Parse controller method
-							parserComments(specDecl, fmt.Sprint(t.X), pkgpath)
+							_ = parserComments(specDecl, fmt.Sprint(t.X), pkgpath)
 						}
 					}
 				case *ast.GenDecl:
@@ -802,7 +802,7 @@ func setParamType(para *swagger.Parameter, typ string, pkgpath, controllerName s
 		paraFormat = typeFormat[1]
 		if para.In == "body" {
 			para.Schema = &swagger.Schema{
-				Type: paraType,
+				Type:   paraType,
 				Format: paraFormat,
 			}
 		}

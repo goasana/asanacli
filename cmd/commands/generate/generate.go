@@ -169,7 +169,7 @@ func appCode(cmd *commands.Command, args []string, currPath string) {
 
 func migration(cmd *commands.Command, args []string, currPath string) {
 	if len(args) < 2 {
-		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
+		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asanacli help generate")
 	}
 	_ = cmd.Flag.Parse(args[2:])
 	mname := args[1]
@@ -191,18 +191,18 @@ func controller(args []string, currPath string) {
 		cname := args[1]
 		generate.GenerateController(cname, currPath)
 	} else {
-		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
+		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asanacli help generate")
 	}
 }
 
 func model(cmd *commands.Command, args []string, currPath string) {
 	if len(args) < 2 {
-		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
+		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asanacli help generate")
 	}
 	cmd.Flag.Parse(args[2:])
 	if generate.Fields == "" {
 		asanaLogger.Log.Hint("Fields option should not be empty, i.e. -Fields=\"title:string,body:text\"")
-		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
+		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asanacli help generate")
 	}
 	sname := args[1]
 	generate.GenerateModel(sname, generate.Fields.String(), currPath)
@@ -213,6 +213,6 @@ func view(args []string, currPath string) {
 		cname := args[1]
 		generate.GenerateView(cname, currPath)
 	} else {
-		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asana help generate")
+		asanaLogger.Log.Fatal("Wrong number of arguments. Run: asanacli help generate")
 	}
 }

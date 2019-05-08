@@ -26,9 +26,9 @@ const verboseVersionBanner string = `%s%s______
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
  / ___ |___/ / ___ |/ /|  / ___ |
-/_/  |_/____/_/  |_/_/ |_/_/  |_| v{{ .AsanaVersion }}%s
+/_/  |_/____/_/  |_/_/ |_/_/  |_| v{{ .AsanaCLIVersion }}%s
 %s%s
-├── Asana     : {{ .AsanaFrameworkVersion }}
+├── Asana     : {{ .AsanaCLIVersion }}
 ├── GoVersion : {{ .GoVersion }}
 ├── GOOS      : {{ .GOOS }}
 ├── GOARCH    : {{ .GOARCH }}
@@ -44,7 +44,7 @@ const shortVersionBanner = `______
    /   | / ___//   |  / | / /   |
   / /| | \__ \/ /| | /  |/ / /| |
  / ___ |___/ / ___ |/ /|  / ___ |
-/_/  |_/____/_/  |_/_/ |_/_/  |_|  v{{ .AsanaVersion }}
+/_/  |_/____/_/  |_/_/ |_/_/  |_|  v{{ .AsanaCLIVersion }}
 `
 
 var CmdVersion = &commands.Command{
@@ -128,7 +128,7 @@ func GetAsanaVersion() string {
 		return ""
 	}
 	for _, wg := range wgopath {
-		wg, _ = path.EvalSymlinks(path.Join(wg, "src", "github.com", "goasana", "framework"))
+		wg, _ = path.EvalSymlinks(path.Join(wg, "src", "github.com", "goasana", "asana"))
 		filename := path.Join(wg, "asana.go")
 		_, err := os.Stat(filename)
 		if err != nil {

@@ -76,7 +76,7 @@ func IsAsanaProject(thePath string) bool {
 	// Walk the application path tree to look for main files.
 	// Main files must satisfy the 'hasAsanaRegex' regular expression.
 	go func() {
-		filepath.Walk(thePath, func(fpath string, f os.FileInfo, err error) error {
+		_ = filepath.Walk(thePath, func(fpath string, f os.FileInfo, err error) error {
 			if err != nil {
 				return nil
 			}

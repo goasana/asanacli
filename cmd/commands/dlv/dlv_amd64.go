@@ -41,7 +41,7 @@ var cmdDlv = &commands.Command{
 	Short:       "Start a debugging session using Delve",
 	Long: `dlv command start a debugging session using debugging tool Delve.
 
-  To debug your application using Delve, use: {{"$ asana dlv" | bold}}
+  To debug your application using Delve, use: {{"$ asanacli dlv" | bold}}
 
   For more information on Delve: https://github.com/go-delve/delve
 `,

@@ -1307,7 +1307,7 @@ func (c *{{ctrlName}}Controller) Delete() {
 	RouterTPL = `// @APIVersion 1.0.0
 // @Title asana Test API
 // @Description asana has a very cool tools to autogenerate documents for your API
-// @Contact astaxie@gmail.com
+// @Contact goasana@gmail.com
 // @TermsOfServiceUrl http://asana.me/
 // @License Apache 2.0
 // @LicenseUrl http://www.apache.org/licenses/LICENSE-2.0.html
