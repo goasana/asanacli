@@ -57,7 +57,7 @@ Prints the current Asana, Asana and Go version alongside the platform informatio
 }
 var outputFormat string
 
-const version = "1.0"
+const version = "1.0.0"
 
 func init() {
 	fs := flag.NewFlagSet("version", flag.ContinueOnError)
