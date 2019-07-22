@@ -22,7 +22,7 @@ var CmdFix = &commands.Command{
 	Long: `As of {{"Asana 1.0"|bold}}, there are some backward compatibility issues.
 
   The command 'fix' will try to solve those issues by upgrading your code base
-  to be compatible  with Asana version 1.0+.
+  to be compatible  with Asana version 1.0.0+.
 `,
 }
 
